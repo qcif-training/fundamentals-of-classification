@@ -1,0 +1,35 @@
+{
+  "00_workshop_guide.ipynb": {
+    "00_workshop_guide.html": "55ba1e34"
+  },
+  "01_introduction.ipynb": {
+    "01_introduction.html": "df5642d4"
+  },
+  "02_logistic_regression.ipynb": {
+    "02_logistic_regression.html": "f940de35"
+  },
+  "03_logistic_regression_optimization.ipynb": {
+    "03_logistic_regression_optimization.html": "f3a65c34"
+  },
+  "04_svm.ipynb": {
+    "04_svm.html": "e38e4a0c"
+  },
+  "05_svm_optimization.ipynb": {
+    "05_svm_optimization.html": "57dec075"
+  },
+  "06_model_evaluation.ipynb": {
+    "06_model_evaluation.html": "68abb809"
+  },
+  "07_neural_networks.ipynb": {
+    "07_neural_networks.html": "4e9b0cdd"
+  },
+  "08_neural_networks_optimization.ipynb": {
+    "08_neural_networks_optimization.html": "ab1eaa6d"
+  },
+  "09_random_forest.ipynb": {
+    "09_random_forest.html": "9183aa6c"
+  },
+  "10_random_forest_optimization.ipynb": {
+    "10_random_forest_optimization.html": "7fdf4c9b"
+  }
+}

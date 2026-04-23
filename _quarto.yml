@@ -1,0 +1,42 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Fundamentals of Classification"
+
+  sidebar:
+    style: docked
+    contents:
+      - text: "Workshop Guide"
+        href: 00_workshop_guide.ipynb
+      - text: "Introduction"
+        href: 01_introduction.ipynb
+      - text: "Logistic Regression"
+        href: 02_logistic_regression.ipynb
+      - text: "Logistic Regression Optimisation"
+        href: 03_logistic_regression_optimization.ipynb
+      - text: "Support Vector Machines"
+        href: 04_svm.ipynb
+      - text: "SVM Optimisation"
+        href: 05_svm_optimization.ipynb
+      - text: "Model Evaluation"
+        href: 06_model_evaluation.ipynb
+      - text: "Neural Networks"
+        href: 07_neural_networks.ipynb
+      - text: "Neural Network Optimisation"
+        href: 08_neural_networks_optimization.ipynb
+      - text: "Random Forest"
+        href: 09_random_forest.ipynb
+      - text: "Random Forest Optimisation"
+        href: 10_random_forest_optimization.ipynb
+
+  repo-url: "https://github.com/Moji131/YOUR-NEW-REPO"
+  repo-actions: [source, issue]
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-location: right
