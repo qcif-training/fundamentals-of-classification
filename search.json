@@ -1,0 +1,652 @@
+[
+  {
+    "objectID": "10_random_forest_optimization.html",
+    "href": "10_random_forest_optimization.html",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "",
+    "text": "In this notebook, we demonstrate how to tune hyperparameters in a Random Forest Classifier to improve classification performance.\nWe will use the Breast Cancer Wisconsin dataset to: - Train an initial Random Forest model. - Explore the effects of the most important hyperparameters: - n_estimators — Number of trees in the forest. - max_depth — Maximum depth of each tree. - min_samples_split — Minimum number of samples required to split an internal node.\nRandom Forest is a powerful ensemble method for classification tasks that builds multiple decision trees and merges their outputs for improved accuracy and robustness. By tuning these hyperparameters, we can significantly improve model performance.",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "10_random_forest_optimization.html#step-1-load-breast-cancer-data",
+    "href": "10_random_forest_optimization.html#step-1-load-breast-cancer-data",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "Step 1: Load Breast Cancer Data",
+    "text": "Step 1: Load Breast Cancer Data\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "10_random_forest_optimization.html#exploring-the-effect-of-the-n_estimators-hyperparameter",
+    "href": "10_random_forest_optimization.html#exploring-the-effect-of-the-n_estimators-hyperparameter",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "Exploring the Effect of the n_estimators Hyperparameter",
+    "text": "Exploring the Effect of the n_estimators Hyperparameter\nThe n_estimators parameter in Random Forest controls the number of trees in the forest: - Low n_estimators values → Fewer trees → Faster training but possibly underfitting. - High n_estimators values → More trees → Better performance but increased computation.\nWe will train Random Forest models with different n_estimators values and observe how it affects accuracy.\n\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport matplotlib.pyplot as plt\n\n# Test different values of n_estimators\nn_estimators_values = [1, 2 ,4, 8, 10, 20, 30, 50, 70, 90]\ntrain_scores = []\ntest_scores = []\n\nfor n in n_estimators_values:\n    model = RandomForestClassifier(n_estimators=n, random_state=42)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Plot the results\nplt.figure(figsize=(8, 6))\nplt.plot(n_estimators_values, train_scores, marker='o', label='Train Accuracy')\nplt.plot(n_estimators_values, test_scores, marker='s', label='Test Accuracy')\nplt.xlabel('n_estimators (Number of Trees)')\nplt.ylabel('Accuracy')\nplt.title('Effect of n_estimators on Random Forest')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "10_random_forest_optimization.html#exploring-the-effect-of-the-max_depth-hyperparameter",
+    "href": "10_random_forest_optimization.html#exploring-the-effect-of-the-max_depth-hyperparameter",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "Exploring the Effect of the max_depth Hyperparameter",
+    "text": "Exploring the Effect of the max_depth Hyperparameter\nThe max_depth parameter controls the maximum depth of each tree: - Low max_depth values → Shallow trees → Simpler models, possibly underfitting. - High max_depth values → Deeper trees → More complex models, potentially overfitting.\nWe will now examine how varying max_depth affects the model’s performance, while keeping n_estimators fixed.\n\n# Test different values of max_depth\nmax_depth_values = [2, 4, 6, 8, 10, 20]\ntrain_scores = []\ntest_scores = []\n\nfor depth in max_depth_values:\n    model = RandomForestClassifier(n_estimators=100, max_depth=depth, random_state=42)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Plot the results\nplt.figure(figsize=(8, 6))\nplt.plot(max_depth_values, train_scores, marker='o', label='Train Accuracy')\nplt.plot(max_depth_values, test_scores, marker='s', label='Test Accuracy')\nplt.xlabel('max_depth')\nplt.ylabel('Accuracy')\nplt.title('Effect of max_depth on Random Forest')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "10_random_forest_optimization.html#exploring-the-effect-of-the-min_samples_split-hyperparameter",
+    "href": "10_random_forest_optimization.html#exploring-the-effect-of-the-min_samples_split-hyperparameter",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "Exploring the Effect of the min_samples_split Hyperparameter",
+    "text": "Exploring the Effect of the min_samples_split Hyperparameter\nThe min_samples_split parameter controls the minimum number of samples required to split an internal node: - Low min_samples_split values → More splits → Complex trees, potentially overfitting. - High min_samples_split values → Fewer splits → Simpler trees, possibly underfitting.\nWe will now compare different min_samples_split values to observe their impact on performance.\n\n# Test different values of min_samples_split\nmin_samples_split_values = [2, 5, 10, 20, 50]\ntrain_scores = []\ntest_scores = []\n\nfor min_split in min_samples_split_values:\n    model = RandomForestClassifier(n_estimators=100, max_depth=6, min_samples_split=min_split, random_state=42)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Show numeric results\nfor m, tr, te in zip(min_samples_split_values, train_scores, test_scores):\n    print(f\"min_samples_split: {m} → Train Accuracy: {tr:.3f}, Test Accuracy: {te:.3f}\")\n\n# Plot the results\nimport numpy as np\n\nx = np.arange(len(min_samples_split_values))\nwidth = 0.35\n\n# plt.figure(figsize=(8, 6))\n# plt.bar(x - width/2, train_scores, width, label='Train Accuracy')\n# plt.bar(x + width/2, test_scores, width, label='Test Accuracy')\n# plt.xticks(x, min_samples_split_values)\n# plt.xlabel('min_samples_split')\n# plt.ylabel('Accuracy')\n# plt.title('Effect of min_samples_split on Random Forest')\n# plt.legend()\n# plt.grid(True, axis='y')\n# plt.show()\n\n# Plot the results\nplt.figure(figsize=(8, 6))\nplt.plot( min_samples_split_values, train_scores, marker='o', label='Train Accuracy')\nplt.plot( min_samples_split_values, test_scores, marker='s', label='Test Accuracy')\nplt.xlabel('max_depth')\nplt.ylabel('Accuracy')\nplt.title('Effect of max_depth on Random Forest')\nplt.legend()\nplt.grid(True)\nplt.show()\n\nmin_samples_split: 2 → Train Accuracy: 0.997, Test Accuracy: 0.965\nmin_samples_split: 5 → Train Accuracy: 0.995, Test Accuracy: 0.959\nmin_samples_split: 10 → Train Accuracy: 0.980, Test Accuracy: 0.947\nmin_samples_split: 20 → Train Accuracy: 0.972, Test Accuracy: 0.947\nmin_samples_split: 50 → Train Accuracy: 0.972, Test Accuracy: 0.942",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "10_random_forest_optimization.html#changing-the-classification-threshold",
+    "href": "10_random_forest_optimization.html#changing-the-classification-threshold",
+    "title": "Optimising a Random Forest Classifier",
+    "section": "Changing the Classification Threshold",
+    "text": "Changing the Classification Threshold\nMost classifiers output probabilities between 0 and 1. By default, the threshold for classification is 0.5. This means:\n\nIf predicted probability ≥ 0.5 → classify as positive\nElse → classify as negative\n\n\nChanging the Threshold:\n\nLower threshold → more positives predicted → higher recall, more false positives\nHigher threshold → fewer positives predicted → higher precision, more false negatives\n\nChoosing the right threshold depends on your application’s goals.\nWe’ll now visualize how the confusion matrix changes for two different thresholds.\n\nfrom sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay\n\nthresholds = [0.3, 0.5, 0.7]         # List of two thresholds to compare\n\n\n# Train Random Forest with probability estimates\nmodel = RandomForestClassifier(n_estimators=100, max_depth=6, min_samples_split=5, random_state=42)\nmodel.fit(X_train, y_train)\n\n# Predict probabilities\ny_proba = model.predict_proba(X_test)[:, 1]  # Probability of class 1\n\n# Plot side-by-side confusion matrices\nfig, axs = plt.subplots(1, 3, figsize=(12, 5))\nfor i, thresh in enumerate(thresholds):\n    y_pred = (y_proba &gt;= thresh).astype(int)\n    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=axs[i])\n    axs[i].set_title(f\"Threshold = {thresh}\")\nplt.tight_layout()\nplt.show()",
+    "crumbs": [
+      "Random Forest Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html",
+    "href": "08_neural_networks_optimization.html",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "",
+    "text": "In this notebook, we demonstrate how to tune hyperparameters in a neural network model to improve performance.\nWe will focus on: - hidden_layer_sizes - alpha (regularization) - learning_rate_init\nWe’ll also visualize how these parameters affect accuracy, and look for signs of overfitting or underfitting.",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#step-1-load-breast-cancer-data",
+    "href": "08_neural_networks_optimization.html#step-1-load-breast-cancer-data",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Step 1: Load Breast Cancer Data",
+    "text": "Step 1: Load Breast Cancer Data\nLoad with Normalisation\n\n# from sklearn.datasets import load_breast_cancer\n# from sklearn.model_selection import train_test_split\n# from sklearn.preprocessing import StandardScaler\n# import pandas as pd\n\n# # Load dataset\n# data = load_breast_cancer()\n# X = data.data\n# y = data.target\n\n# # Split dataset\n# X_train, X_test, y_train, y_test = train_test_split(\n#     X, y, test_size=0.3, random_state=31\n# )\n\n# # Normalize (Standardize) features\n# scaler = StandardScaler()\n# X_train = scaler.fit_transform(X_train)\n# X_test = scaler.transform(X_test)\n\nLoad without Normalisation To see the effects of different network sizes and other hyperparameters we use the non-normlaised dataset. For teh easier task of calssifying using normalised data most values for hyperparameters result in a very good accuracy.\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#step-2-define-a-function-to-train-and-evaluate",
+    "href": "08_neural_networks_optimization.html#step-2-define-a-function-to-train-and-evaluate",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Step 2: Define a Function to Train and Evaluate",
+    "text": "Step 2: Define a Function to Train and Evaluate\nThis function will: - Train the MLP model - Return training and test accuracy\n\nfrom sklearn.neural_network import MLPClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef train_and_evaluate(hidden_layer_sizes=(200, 400, 400, 200), alpha=0.0001, lr=0.001):\n    model = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes,\n                           alpha=alpha,\n                           learning_rate_init=lr,\n                           max_iter=2000,\n                           random_state=42)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    return train_acc, test_acc",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#step-3-explore-effect-of-hidden_layer_sizes",
+    "href": "08_neural_networks_optimization.html#step-3-explore-effect-of-hidden_layer_sizes",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Step 3: Explore Effect of hidden_layer_sizes",
+    "text": "Step 3: Explore Effect of hidden_layer_sizes\nThe number of neurons and layers controls the model’s capacity.\n\nToo small: underfitting\nToo large: overfitting\n\n\nimport matplotlib.pyplot as plt\n\nvalues = [ (50,50), (50, 50, 50), (200, 400, 400, 200), (200, 400, 400, 400, 400, 200), (200, 400, 800, 800, 800, 400, 400, 200)]\nlabels = [0, 1, 2, 3, 4]\ntrain_scores, test_scores = [], []\n\nfor s in values:\n    tr, te = train_and_evaluate(hidden_layer_sizes=s)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nlabels = [str(s) for s in values]\n\nplt.plot(labels, train_scores, marker='o', label='Train Acc')\nplt.plot(labels, test_scores, marker='s', label='Test Acc')\nplt.xlabel('Hidden Layer Sizes')\nplt.ylabel('Accuracy')\nplt.title('Effect of Network Size')\nplt.legend()\nplt.grid(True)\nplt.xticks(rotation=90, ha='right')\nplt.show()",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#step-4-explore-effect-of-alpha-l2-regularization",
+    "href": "08_neural_networks_optimization.html#step-4-explore-effect-of-alpha-l2-regularization",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Step 4: Explore Effect of alpha (L2 Regularization)",
+    "text": "Step 4: Explore Effect of alpha (L2 Regularization)\nalpha prevents overfitting by penalising large weights.\n\nLow alpha: can overfit\nHigh alpha: can underfit\n\n\\[\n\\text{Loss} = \\text{Original Loss} + \\frac{\\alpha}{2} \\sum_{i} w_i^2\n\\]\n\nalphas =  [1e-1, 3e-1, 5e-1, 7e-1, 1e1]\ntrain_scores, test_scores = [], []\n\nfor a in alphas:\n    tr, te = train_and_evaluate(alpha=a)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nplt.semilogx(alphas, train_scores, marker='o', label='Train Acc')\nplt.semilogx(alphas, test_scores, marker='s', label='Test Acc')\nplt.xlabel('alpha (log scale)')\nplt.ylabel('Accuracy')\nplt.title('Effect of Regularization Strength')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#step-5-explore-effect-of-learning_rate_init",
+    "href": "08_neural_networks_optimization.html#step-5-explore-effect-of-learning_rate_init",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Step 5: Explore Effect of learning_rate_init",
+    "text": "Step 5: Explore Effect of learning_rate_init\nThis controls how fast the model updates its weights.\n\nToo small: slow convergence\nToo large: may never converge\n\n\nlrs = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]\ntrain_scores, test_scores = [], []\n\nfor lr in lrs:\n    tr, te = train_and_evaluate(lr=lr)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nplt.plot(lrs, train_scores, marker='o', label='Train Acc')\nplt.plot(lrs, test_scores, marker='s', label='Test Acc')\nplt.xscale('log')\nplt.xlabel('Learning Rate (log scale)')\nplt.ylabel('Accuracy')\nplt.title('Effect of Learning Rate')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#conclusion",
+    "href": "08_neural_networks_optimization.html#conclusion",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nNeural networks are sensitive to hyperparameters\nUse visualisation to find sweet spot\nAvoid overfitting by tuning alpha and hidden_layer_sizes\nDon’t pick hyperparameters blindly – use grid search or cross-validation",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "08_neural_networks_optimization.html#changing-the-classification-threshold",
+    "href": "08_neural_networks_optimization.html#changing-the-classification-threshold",
+    "title": "Optimising a Neural Network Classifier",
+    "section": "Changing the Classification Threshold",
+    "text": "Changing the Classification Threshold\nMost classifiers like neural networks output probabilities between 0 and 1. By default, the threshold for classification is 0.5. This means:\n\nIf predicted probability ≥ 0.5 → classify as positive\nElse → classify as negative\n\n\nChanging the Threshold:\n\nLower threshold → more positives predicted → higher recall, more false positives\nHigher threshold → fewer positives predicted → higher precision, more false negatives\n\nChoosing the right threshold depends on your application’s goals.\nWe’ll now visualize how the confusion matrix changes for two different thresholds.\n\nfrom sklearn.metrics import ConfusionMatrixDisplay\n\nthresholds = [0.3, 0.5, 0.7]         # List of two thresholds to compare\n\n# Retrain model\nmanual_model = MLPClassifier()\nmanual_model.fit(X_train, y_train)\n\n# Predict probabilities\ny_proba = manual_model.predict_proba(X_test)[:, 1]\n\n# Plot side-by-side confusion matrices\nfig, axs = plt.subplots(1, 3, figsize=(12, 5))\nfor i, thresh in enumerate(thresholds):\n    y_pred = (y_proba &gt;= thresh).astype(int)\n    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=axs[i])\n    axs[i].set_title(f\"Threshold = {thresh}\")\nplt.tight_layout()\nplt.show()\n\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\neural_network\\_multilayer_perceptron.py:780: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (200) reached and the optimization hasn't converged yet.\n  warnings.warn(",
+    "crumbs": [
+      "Neural Network Optimisation"
+    ]
+  },
+  {
+    "objectID": "06_model_evaluation.html",
+    "href": "06_model_evaluation.html",
+    "title": "Model Evaluation: Comparing Logistic Regression and SVM",
+    "section": "",
+    "text": "We compare two classifiers: - Logistic Regression - SVM\nUsing metrics: Accuracy, Precision, Recall, F1 Score, Confusion Matrix, and ROC-AUC.",
+    "crumbs": [
+      "Model Evaluation"
+    ]
+  },
+  {
+    "objectID": "06_model_evaluation.html#step-1-load-the-data",
+    "href": "06_model_evaluation.html#step-1-load-the-data",
+    "title": "Model Evaluation: Comparing Logistic Regression and SVM",
+    "section": "Step 1: Load the Data",
+    "text": "Step 1: Load the Data\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Model Evaluation"
+    ]
+  },
+  {
+    "objectID": "06_model_evaluation.html#step-2-train-the-models",
+    "href": "06_model_evaluation.html#step-2-train-the-models",
+    "title": "Model Evaluation: Comparing Logistic Regression and SVM",
+    "section": "Step 2: Train the Models",
+    "text": "Step 2: Train the Models\n\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.svm import SVC\n\nlr_model = LogisticRegression(max_iter=5000)\nlr_model.fit(X_train, y_train)\n\nsvm_model = SVC(probability=True)\nsvm_model.fit(X_train, y_train)\n\nSVC(probability=True)In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.SVC?Documentation for SVCiFitted\n        \n            \n                Parameters\n                \n\n\n\n\nC \n1.0\n\n\n\nkernel \n'rbf'\n\n\n\ndegree \n3\n\n\n\ngamma \n'scale'\n\n\n\ncoef0 \n0.0\n\n\n\nshrinking \nTrue\n\n\n\nprobability \nTrue\n\n\n\ntol \n0.001\n\n\n\ncache_size \n200\n\n\n\nclass_weight \nNone\n\n\n\nverbose \nFalse\n\n\n\nmax_iter \n-1\n\n\n\ndecision_function_shape \n'ovr'\n\n\n\nbreak_ties \nFalse\n\n\n\nrandom_state \nNone",
+    "crumbs": [
+      "Model Evaluation"
+    ]
+  },
+  {
+    "objectID": "06_model_evaluation.html#step-3-evaluation-metrics",
+    "href": "06_model_evaluation.html#step-3-evaluation-metrics",
+    "title": "Model Evaluation: Comparing Logistic Regression and SVM",
+    "section": "Step 3: Evaluation Metrics",
+    "text": "Step 3: Evaluation Metrics\n\nWhat is Accuracy?\nAccuracy is the proportion of correct predictions:\n\\[\n\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}\n\\]\nCan be misleading if classes are imbalanced.\n\nfrom sklearn.metrics import accuracy_score\n\n\nlr_acc = accuracy_score(y_test, lr_model.predict(X_test))\nsvm_acc = accuracy_score(y_test, svm_model.predict(X_test))\n\nprint(f\"Logistic egression Accuracy: {lr_acc:.2f}\")\nprint(f\"SVM Accuracy: {svm_acc:.2f}\")\n\nLogistic egression Accuracy: 0.98\nSVM Accuracy: 0.98\n\n\n\n\nWhat are Precision, Recall and F1 Score?\n\nPrecision: \\(\\frac{TP}{TP + FP}\\)\n\nRecall: \\(\\frac{TP}{TP + FN}\\)\n\nF1 Score: Harmonic mean of precision and recall\n\n\\[\nF1 = 2 \\cdot \\frac{\\text{Precision} \\cdot \\text{Recall}}{\\text{Precision} + \\text{Recall}}\n\\]\n\nfrom sklearn.metrics import precision_score, recall_score, f1_score\n\nfor name, model in [(\"SVM\", svm_model), (\"Neural Net\", lr_model)]:\n    y_pred = model.predict(X_test)\n    print(f\"\\n{name} Metrics:\")\n    print(f\"Precision: {precision_score(y_test, y_pred):.2f}\")\n    print(f\"Recall: {recall_score(y_test, y_pred):.2f}\")\n    print(f\"F1 Score: {f1_score(y_test, y_pred):.2f}\")\n\n\nSVM Metrics:\nPrecision: 0.97\nRecall: 0.99\nF1 Score: 0.98\n\nNeural Net Metrics:\nPrecision: 0.98\nRecall: 0.98\nF1 Score: 0.98\n\n\n\n\nWhat is a Confusion Matrix?\nA confusion matrix shows the breakdown of correct and incorrect classifications.\n\n\n\n\nPredicted Positive\nPredicted Negative\n\n\n\n\nActual Positive\nTrue Positive (TP)\nFalse Negative (FN)\n\n\nActual Negative\nFalse Positive (FP)\nTrue Negative (TN)\n\n\n\n\nfrom sklearn.metrics import ConfusionMatrixDisplay\nimport matplotlib.pyplot as plt\n\nfig, axs = plt.subplots(1, 2, figsize=(12, 5))\nConfusionMatrixDisplay.from_estimator(svm_model, X_test, y_test, ax=axs[0])\naxs[0].set_title(\"SVM Confusion Matrix\")\nConfusionMatrixDisplay.from_estimator(lr_model, X_test, y_test, ax=axs[1])\naxs[1].set_title(\"Neural Network Confusion Matrix\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\nWhat is the ROC Curve?\nROC = Receiver Operating Characteristic Curve\n\nPlots TPR vs FPR\nAUC = Area Under the ROC Curve Closer to 1 = better model.\n\n\nfrom sklearn.metrics import roc_curve, auc\n\nsvm_probs = svm_model.predict_proba(X_test)[:, 1]\nnn_probs = lr_model.predict_proba(X_test)[:, 1]\n\nsvm_fpr, svm_tpr, _ = roc_curve(y_test, svm_probs)\nnn_fpr, nn_tpr, _ = roc_curve(y_test, nn_probs)\nsvm_auc = auc(svm_fpr, svm_tpr)\nnn_auc = auc(nn_fpr, nn_tpr)\n\nplt.figure(figsize=(8, 6))\nplt.plot(svm_fpr, svm_tpr, label=f\"SVM (AUC = {svm_auc:.2f})\")\nplt.plot(nn_fpr, nn_tpr, label=f\"Logistic Regression (AUC = {nn_auc:.2f})\")\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel(\"False Positive Rate\")\nplt.ylabel(\"True Positive Rate\")\nplt.title(\"ROC Curve\")\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Model Evaluation"
+    ]
+  },
+  {
+    "objectID": "06_model_evaluation.html#conclusion",
+    "href": "06_model_evaluation.html#conclusion",
+    "title": "Model Evaluation: Comparing Logistic Regression and SVM",
+    "section": "Conclusion",
+    "text": "Conclusion\nBoth models perform well, but:\n\nNeural Net may achieve higher recall\nSVM may offer higher precision\n\nEvaluation metrics guide us to choose the best model for our real-world use case.",
+    "crumbs": [
+      "Model Evaluation"
+    ]
+  },
+  {
+    "objectID": "04_svm.html",
+    "href": "04_svm.html",
+    "title": "Support Vector Machine (SVM) with Breast Cancer Dataset",
+    "section": "",
+    "text": "This notebook demonstrates the use of Support Vector Machines (SVM) for classifying tumors in the Breast Cancer dataset.",
+    "crumbs": [
+      "Support Vector Machines"
+    ]
+  },
+  {
+    "objectID": "04_svm.html#what-is-an-svm",
+    "href": "04_svm.html#what-is-an-svm",
+    "title": "Support Vector Machine (SVM) with Breast Cancer Dataset",
+    "section": "What is an SVM?",
+    "text": "What is an SVM?\nSupport Vector Machines are powerful supervised learning models for classification. An SVM finds the hyperplane that best separates data points from two classes.\nIt maximizes the margin, which is the distance between the hyperplane and the nearest points from each class (support vectors).",
+    "crumbs": [
+      "Support Vector Machines"
+    ]
+  },
+  {
+    "objectID": "04_svm.html#step-1-load-the-breast-cancer-dataset",
+    "href": "04_svm.html#step-1-load-the-breast-cancer-dataset",
+    "title": "Support Vector Machine (SVM) with Breast Cancer Dataset",
+    "section": "Step 1: Load the Breast Cancer Dataset",
+    "text": "Step 1: Load the Breast Cancer Dataset\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Support Vector Machines"
+    ]
+  },
+  {
+    "objectID": "04_svm.html#step-3-train-an-svm-model",
+    "href": "04_svm.html#step-3-train-an-svm-model",
+    "title": "Support Vector Machine (SVM) with Breast Cancer Dataset",
+    "section": "Step 3: Train an SVM Model",
+    "text": "Step 3: Train an SVM Model\nWe use the SVC class from sklearn.svm with default kernel (RBF).\n\nfrom sklearn.svm import SVC\n\nmodel = SVC(probability=True)\nmodel.fit(X_train, y_train)\n\nSVC(probability=True)In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.SVC?Documentation for SVCiFitted\n        \n            \n                Parameters\n                \n\n\n\n\nC \n1.0\n\n\n\nkernel \n'rbf'\n\n\n\ndegree \n3\n\n\n\ngamma \n'scale'\n\n\n\ncoef0 \n0.0\n\n\n\nshrinking \nTrue\n\n\n\nprobability \nTrue\n\n\n\ntol \n0.001\n\n\n\ncache_size \n200\n\n\n\nclass_weight \nNone\n\n\n\nverbose \nFalse\n\n\n\nmax_iter \n-1\n\n\n\ndecision_function_shape \n'ovr'\n\n\n\nbreak_ties \nFalse\n\n\n\nrandom_state \nNone",
+    "crumbs": [
+      "Support Vector Machines"
+    ]
+  },
+  {
+    "objectID": "04_svm.html#step-4-evaluate-the-model",
+    "href": "04_svm.html#step-4-evaluate-the-model",
+    "title": "Support Vector Machine (SVM) with Breast Cancer Dataset",
+    "section": "Step 4: Evaluate the Model",
+    "text": "Step 4: Evaluate the Model\n\nfrom sklearn.metrics import (\n    accuracy_score, precision_score, recall_score, f1_score,\n    ConfusionMatrixDisplay, classification_report, roc_curve, auc\n)\n\ny_pred = model.predict(X_test)\nprint(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Precision:\", precision_score(y_test, y_pred))\nprint(\"Recall:\", recall_score(y_test, y_pred))\nprint(\"F1 Score:\", f1_score(y_test, y_pred))\nprint(\"\\nClassification Report:\\n\", classification_report(y_test, y_pred))\n\nAccuracy: 0.9766081871345029\nPrecision: 0.972972972972973\nRecall: 0.9908256880733946\nF1 Score: 0.9818181818181818\n\nClassification Report:\n               precision    recall  f1-score   support\n\n           0       0.98      0.95      0.97        62\n           1       0.97      0.99      0.98       109\n\n    accuracy                           0.98       171\n   macro avg       0.98      0.97      0.97       171\nweighted avg       0.98      0.98      0.98       171\n\n\n\n\nWhat is a Confusion Matrix?\nA confusion matrix is a summary of prediction results:\n\n\n\n\nPredicted Positive\nPredicted Negative\n\n\n\n\nActual Positive\nTrue Positive (TP)\nFalse Negative (FN)\n\n\nActual Negative\nFalse Positive (FP)\nTrue Negative (TN)\n\n\n\n\nAccuracy, Precision, Recall, F1 Score are all derived from this table.\n\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nConfusionMatrixDisplay.from_estimator(model, X_test, y_test)\nplt.title('SVM Confusion Matrix')\nplt.show()\n\n\n\n\n\n\n\n\n\n\nWhat is an ROC Curve?\nThe ROC Curve shows the trade-off between True Positive Rate (Recall) and False Positive Rate. The AUC (Area Under Curve) summarizes the performance into a single number.\n\ny_proba = model.predict_proba(X_test)[:, 1]\nfpr, tpr, _ = roc_curve(y_test, y_proba)\nroc_auc = auc(fpr, tpr)\n\nplt.plot(fpr, tpr, label='AUC = ' + str(round(roc_auc, 2)))\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel('False Positive Rate')\nplt.ylabel('True Positive Rate')\nplt.title('SVM ROC Curve')\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Support Vector Machines"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html",
+    "href": "02_logistic_regression.html",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "",
+    "text": "This notebook demonstrates how to use Logistic Regression, a fundamental classification algorithm, to predict whether a tumor is malignant or benign using the Breast Cancer Wisconsin dataset.",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html#what-is-logistic-regression",
+    "href": "02_logistic_regression.html#what-is-logistic-regression",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "What is Logistic Regression?",
+    "text": "What is Logistic Regression?\nLogistic Regression is a supervised learning algorithm used for binary classification.\nIt models the probability that an input \\(\\mathbf{x}\\) belongs to class \\(y=1\\) using the logistic (sigmoid) function:\n\\[\nP(y=1 | \\mathbf{x}) = \\frac{1}{1 + e^{- (\\mathbf{w}^T \\mathbf{x} + b)}}\n\\]\nThe output is a probability between 0 and 1. We classify an observation as class 1 if the predicted probability exceeds a threshold (typically 0.5).",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html#step-1-load-and-explore-the-data",
+    "href": "02_logistic_regression.html#step-1-load-and-explore-the-data",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "Step 1: Load and Explore the Data",
+    "text": "Step 1: Load and Explore the Data\nWe use the load_breast_cancer() dataset from Scikit-Learn. It includes 30 numeric features extracted from breast mass images.\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html#step-3-split-the-data-and-train-the-model",
+    "href": "02_logistic_regression.html#step-3-split-the-data-and-train-the-model",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "Step 3: Split the Data and Train the Model",
+    "text": "Step 3: Split the Data and Train the Model\nWe split the dataset into training and testing sets, and fit a logistic regression model.\n\nfrom sklearn.linear_model import LogisticRegression\n\nmodel = LogisticRegression(max_iter=5000)\nmodel.fit(X_train, y_train)\n\nLogisticRegression(max_iter=5000)In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.LogisticRegression?Documentation for LogisticRegressioniFitted\n        \n            \n                Parameters\n                \n\n\n\n\npenalty \n'l2'\n\n\n\ndual \nFalse\n\n\n\ntol \n0.0001\n\n\n\nC \n1.0\n\n\n\nfit_intercept \nTrue\n\n\n\nintercept_scaling \n1\n\n\n\nclass_weight \nNone\n\n\n\nrandom_state \nNone\n\n\n\nsolver \n'lbfgs'\n\n\n\nmax_iter \n5000\n\n\n\nmulti_class \n'deprecated'\n\n\n\nverbose \n0\n\n\n\nwarm_start \nFalse\n\n\n\nn_jobs \nNone\n\n\n\nl1_ratio \nNone",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html#step-4-evaluate-the-model",
+    "href": "02_logistic_regression.html#step-4-evaluate-the-model",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "Step 4: Evaluate the Model",
+    "text": "Step 4: Evaluate the Model\nWe will evaluate our model using the following metrics:\n\nAccuracy: Proportion of correct predictions\nPrecision: Proportion of positive predictions that are correct\nRecall (Sensitivity): Proportion of actual positives correctly identified\nF1 Score: Harmonic mean of precision and recall\nConfusion Matrix: Table showing true vs. predicted labels\nROC Curve: Tradeoff between true positive and false positive rates\nAUC (Area Under Curve): Summary of ROC curve performance",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "02_logistic_regression.html#step-4-evaluate-the-model-1",
+    "href": "02_logistic_regression.html#step-4-evaluate-the-model-1",
+    "title": "Logistic Regression with Breast Cancer Dataset",
+    "section": "Step 4: Evaluate the Model",
+    "text": "Step 4: Evaluate the Model\nMetrics Used: - Accuracy - Precision - Recall - F1-score - Confusion Matrix - ROC Curve and AUC\n\nfrom sklearn.metrics import (\n    classification_report,\n    roc_curve, auc, accuracy_score, precision_score, recall_score, f1_score\n)\n\ny_pred = model.predict(X_test)\nprint(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Precision:\", precision_score(y_test, y_pred))\nprint(\"Recall:\", recall_score(y_test, y_pred))\nprint(\"F1 Score:\", f1_score(y_test, y_pred))\nprint(\"\\nClassification Report:\\n\", classification_report(y_test, y_pred))\n\nAccuracy: 0.9766081871345029\nPrecision: 0.981651376146789\nRecall: 0.981651376146789\nF1 Score: 0.981651376146789\n\nClassification Report:\n               precision    recall  f1-score   support\n\n           0       0.97      0.97      0.97        62\n           1       0.98      0.98      0.98       109\n\n    accuracy                           0.98       171\n   macro avg       0.97      0.97      0.97       171\nweighted avg       0.98      0.98      0.98       171\n\n\n\n\nWhat is a Confusion Matrix?\nA confusion matrix is a table used to describe the performance of a classification model. For binary classification:\n\n\n\n\nPredicted Positive\nPredicted Negative\n\n\n\n\nActual Positive\nTrue Positive (TP)\nFalse Negative (FN)\n\n\nActual Negative\nFalse Positive (FP)\nTrue Negative (TN)\n\n\n\n\nAccuracy = (TP + TN) / (TP + TN + FP + FN)\n\nPrecision = TP / (TP + FP)\n\nRecall (Sensitivity) = TP / (TP + FN)\n\nF1 Score = 2 * (Precision * Recall) / (Precision + Recall)\n\n\nimport matplotlib.pyplot as plt\nfrom sklearn.metrics import ConfusionMatrixDisplay\n\nConfusionMatrixDisplay.from_estimator(model, X_test, y_test)\nplt.title('Confusion Matrix')\nplt.show()\n\n\n\n\n\n\n\n\n\n\nWhat is an ROC Curve?\nAn ROC Curve (Receiver Operating Characteristic) plots:\n\nTrue Positive Rate (Recall) on the Y-axis\nFalse Positive Rate (1 - Specificity) on the X-axis\n\nEach point on the curve corresponds to a different classification threshold. A model with perfect classification has a point in the top-left corner.\nAUC (Area Under Curve) summarizes the ROC curve into a single value between 0 and 1: - AUC = 1: Perfect classifier - AUC = 0.5: No better than random guessing\n\ny_proba = model.predict_proba(X_test)[:, 1]\nfpr, tpr, _ = roc_curve(y_test, y_proba)\nroc_auc = auc(fpr, tpr)\n\nplt.plot(fpr, tpr, label='AUC = ' + str(round(roc_auc, 2)))\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel('False Positive Rate')\nplt.ylabel('True Positive Rate')\nplt.title('ROC Curve')\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Logistic Regression"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html",
+    "href": "00_workshop_guide.html",
+    "title": "Introduction to Regression",
+    "section": "",
+    "text": "A workshop by: QCIF\nhttps://www.qcif.edu.au/",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html#install-python-recommended-version-3.10-or-newer",
+    "href": "00_workshop_guide.html#install-python-recommended-version-3.10-or-newer",
+    "title": "Introduction to Regression",
+    "section": "1. Install Python (Recommended: Version 3.10 or newer)",
+    "text": "1. Install Python (Recommended: Version 3.10 or newer)\n\nWindows\n\nGo to the official Python website: https://www.python.org/downloads/\nDownload the latest Python 3.x installer.\nRun the installer and check the box that says:\n\nAdd Python to PATH\n\nChoose Install Now and follow the prompts.\n\nTo verify installation, open Command Prompt (cmd) and type:\npython --version\nYou should see something like:\nPython 3.11.6\n\n\nmacOS / Linux\nMost systems come with Python preinstalled. You can check your version:\npython3 --version\nIf Python is not installed, install it using your system package manager.\nmacOS (Homebrew):\nbrew install python\nUbuntu / Debian:\nsudo apt update && sudo apt install python3 python3-pip -y",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html#install-jupyterlab",
+    "href": "00_workshop_guide.html#install-jupyterlab",
+    "title": "Introduction to Regression",
+    "section": "2. Install JupyterLab",
+    "text": "2. Install JupyterLab\nOnce Python is installed, you can install packages using pip.\nRun this command in your terminal or command prompt:\npip install jupyterlab\njupyterlab is used for running notebooks interactively.",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html#download-notebooks",
+    "href": "00_workshop_guide.html#download-notebooks",
+    "title": "Introduction to Regression",
+    "section": "3. Download notebooks",
+    "text": "3. Download notebooks\nDownload the workshop notebooks and place them in your desired folder.",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html#install-required-python-packages",
+    "href": "00_workshop_guide.html#install-required-python-packages",
+    "title": "Introduction to Regression",
+    "section": "4. Install required Python packages",
+    "text": "4. Install required Python packages\nFor these regression notebooks, the main packages are:\n\nnumpy\npandas\nmatplotlib\nscikit-learn\nstatsmodels\n\nYou can install them with:\npip install numpy pandas matplotlib scikit-learn statsmodels\n\n# Remove # from the line below and run if packages are not installed\n# !pip install numpy pandas matplotlib scikit-learn statsmodels\n\nIf you are running this in a terminal, remove ! from the start of the command.\nThis will install:\n\nnumpy for numerical arrays and basic numerical computing\npandas for tabular data handling\nmatplotlib for plotting\nscikit-learn for machine learning tools such as train/test split, linear models, pipelines, and cross-validation\nstatsmodels for statistical modelling and diagnostics such as OLS summaries and Q-Q plots\n\nTo verify installation, run the code below:\n\nimport importlib.metadata\n\npackages = [\"numpy\", \"pandas\", \"matplotlib\", \"scikit-learn\", \"statsmodels\"]\nfor pkg in packages:\n    try:\n        print(f\"{pkg}: {importlib.metadata.version(pkg)}\")\n    except importlib.metadata.PackageNotFoundError:\n        print(f\"{pkg}: not installed\")\n\nnumpy: 2.3.3\npandas: 2.3.3\nmatplotlib: 3.10.7\nopenai: 2.6.0\nrequests: 2.32.5",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "00_workshop_guide.html#summary",
+    "href": "00_workshop_guide.html#summary",
+    "title": "Introduction to Regression",
+    "section": "Summary",
+    "text": "Summary\n\nInstall Python 3.10 or newer\nInstall JupyterLab\nInstall the required regression packages\nOpen the notebooks in JupyterLab or Google Colab\nVerify that the packages are available before running the workshop notebooks",
+    "crumbs": [
+      "Workshop Guide"
+    ]
+  },
+  {
+    "objectID": "01_introduction.html",
+    "href": "01_introduction.html",
+    "title": "Introduction to Classification",
+    "section": "",
+    "text": "Classification is a type of supervised learning where the goal is to predict categorical class labels. Given input data, a classification model attempts to assign it to one of several predefined classes.\nSome examples include: - Email spam detection (spam vs. not spam) - Disease diagnosis (positive vs. negative) - Image recognition (cat, dog, or other)",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "01_introduction.html#what-is-classification",
+    "href": "01_introduction.html#what-is-classification",
+    "title": "Introduction to Classification",
+    "section": "",
+    "text": "Classification is a type of supervised learning where the goal is to predict categorical class labels. Given input data, a classification model attempts to assign it to one of several predefined classes.\nSome examples include: - Email spam detection (spam vs. not spam) - Disease diagnosis (positive vs. negative) - Image recognition (cat, dog, or other)",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "01_introduction.html#workshop-goals",
+    "href": "01_introduction.html#workshop-goals",
+    "title": "Introduction to Classification",
+    "section": "Workshop Goals",
+    "text": "Workshop Goals\nBy the end of this workshop, you will be able to: - Understand common classification algorithms - Apply them using Scikit-Learn, NumPy, Pandas, and Matplotlib - Evaluate and optimise models",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "01_introduction.html#topics-covered",
+    "href": "01_introduction.html#topics-covered",
+    "title": "Introduction to Classification",
+    "section": "Topics Covered",
+    "text": "Topics Covered\n\nLogistic Regression\nSupport Vector Machines (SVM)\nModel Evaluation: Accuracy, Precision, Recall, F1-Score, ROC-AUC\nNeural Networks (MLPClassifier)\nRandom Forest Classifier\nOptimisation and Tuning",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "01_introduction.html#required-libraries",
+    "href": "01_introduction.html#required-libraries",
+    "title": "Introduction to Classification",
+    "section": "Required Libraries",
+    "text": "Required Libraries\nWe will use the following Python libraries throughout the workshop: - NumPy – numerical operations - Pandas – data manipulation - Scikit-Learn – machine learning models and tools - Matplotlib – data visualisation - Seaborn - data visualisation\n\nLet’s get started! 🚀\n\nInstalling Libraries\nUncomment and run the commands below only if packages are not installed.\n\n# !pip install numpy pandas matplotlib scikit-learn seaborn\n\n\n\nCheck your environment has the necessary libraries installed\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn import datasets\n\n\n\nPreview Example Dataset\nWe use the load_breast_cancer() dataset from Scikit-Learn. It includes 30 numeric features extracted from breast mass images.\n\nfrom sklearn.datasets import load_breast_cancer\nimport pandas as pd\n\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\ndf = pd.DataFrame(X, columns=data.feature_names)\ndf['target'] = y\ndf.head()\n\n\n\n\n\n\n\n\nmean radius\nmean texture\nmean perimeter\nmean area\nmean smoothness\nmean compactness\nmean concavity\nmean concave points\nmean symmetry\nmean fractal dimension\n...\nworst texture\nworst perimeter\nworst area\nworst smoothness\nworst compactness\nworst concavity\nworst concave points\nworst symmetry\nworst fractal dimension\ntarget\n\n\n\n\n0\n17.99\n10.38\n122.80\n1001.0\n0.11840\n0.27760\n0.3001\n0.14710\n0.2419\n0.07871\n...\n17.33\n184.60\n2019.0\n0.1622\n0.6656\n0.7119\n0.2654\n0.4601\n0.11890\n0\n\n\n1\n20.57\n17.77\n132.90\n1326.0\n0.08474\n0.07864\n0.0869\n0.07017\n0.1812\n0.05667\n...\n23.41\n158.80\n1956.0\n0.1238\n0.1866\n0.2416\n0.1860\n0.2750\n0.08902\n0\n\n\n2\n19.69\n21.25\n130.00\n1203.0\n0.10960\n0.15990\n0.1974\n0.12790\n0.2069\n0.05999\n...\n25.53\n152.50\n1709.0\n0.1444\n0.4245\n0.4504\n0.2430\n0.3613\n0.08758\n0\n\n\n3\n11.42\n20.38\n77.58\n386.1\n0.14250\n0.28390\n0.2414\n0.10520\n0.2597\n0.09744\n...\n26.50\n98.87\n567.7\n0.2098\n0.8663\n0.6869\n0.2575\n0.6638\n0.17300\n0\n\n\n4\n20.29\n14.34\n135.10\n1297.0\n0.10030\n0.13280\n0.1980\n0.10430\n0.1809\n0.05883\n...\n16.67\n152.20\n1575.0\n0.1374\n0.2050\n0.4000\n0.1625\n0.2364\n0.07678\n0\n\n\n\n\n5 rows × 31 columns\n\n\n\n\ndf.describe()\n\n\n\n\n\n\n\n\nmean radius\nmean texture\nmean perimeter\nmean area\nmean smoothness\nmean compactness\nmean concavity\nmean concave points\nmean symmetry\nmean fractal dimension\n...\nworst texture\nworst perimeter\nworst area\nworst smoothness\nworst compactness\nworst concavity\nworst concave points\nworst symmetry\nworst fractal dimension\ntarget\n\n\n\n\ncount\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n...\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n569.000000\n\n\nmean\n14.127292\n19.289649\n91.969033\n654.889104\n0.096360\n0.104341\n0.088799\n0.048919\n0.181162\n0.062798\n...\n25.677223\n107.261213\n880.583128\n0.132369\n0.254265\n0.272188\n0.114606\n0.290076\n0.083946\n0.627417\n\n\nstd\n3.524049\n4.301036\n24.298981\n351.914129\n0.014064\n0.052813\n0.079720\n0.038803\n0.027414\n0.007060\n...\n6.146258\n33.602542\n569.356993\n0.022832\n0.157336\n0.208624\n0.065732\n0.061867\n0.018061\n0.483918\n\n\nmin\n6.981000\n9.710000\n43.790000\n143.500000\n0.052630\n0.019380\n0.000000\n0.000000\n0.106000\n0.049960\n...\n12.020000\n50.410000\n185.200000\n0.071170\n0.027290\n0.000000\n0.000000\n0.156500\n0.055040\n0.000000\n\n\n25%\n11.700000\n16.170000\n75.170000\n420.300000\n0.086370\n0.064920\n0.029560\n0.020310\n0.161900\n0.057700\n...\n21.080000\n84.110000\n515.300000\n0.116600\n0.147200\n0.114500\n0.064930\n0.250400\n0.071460\n0.000000\n\n\n50%\n13.370000\n18.840000\n86.240000\n551.100000\n0.095870\n0.092630\n0.061540\n0.033500\n0.179200\n0.061540\n...\n25.410000\n97.660000\n686.500000\n0.131300\n0.211900\n0.226700\n0.099930\n0.282200\n0.080040\n1.000000\n\n\n75%\n15.780000\n21.800000\n104.100000\n782.700000\n0.105300\n0.130400\n0.130700\n0.074000\n0.195700\n0.066120\n...\n29.720000\n125.400000\n1084.000000\n0.146000\n0.339100\n0.382900\n0.161400\n0.317900\n0.092080\n1.000000\n\n\nmax\n28.110000\n39.280000\n188.500000\n2501.000000\n0.163400\n0.345400\n0.426800\n0.201200\n0.304000\n0.097440\n...\n49.540000\n251.200000\n4254.000000\n0.222600\n1.058000\n1.252000\n0.291000\n0.663800\n0.207500\n1.000000\n\n\n\n\n8 rows × 31 columns\n\n\n\n\ndf.hist(bins=20, figsize=(15, 10))\nplt.tight_layout()\n\n\n\n\n\n\n\n\n\nfrom sklearn.preprocessing import StandardScaler\n\n# Apply StandardScaler\nscaler = StandardScaler()\ndf_scaled = pd.DataFrame(scaler.fit_transform(df), columns=df.columns, index=df.index)\ndf_scaled.describe()\n\n\n\n\n\n\n\n\n\n\nmean radius\nmean texture\nmean perimeter\nmean area\nmean smoothness\nmean compactness\nmean concavity\nmean concave points\nmean symmetry\nmean fractal dimension\n...\nworst texture\nworst perimeter\nworst area\nworst smoothness\nworst compactness\nworst concavity\nworst concave points\nworst symmetry\nworst fractal dimension\ntarget\n\n\n\n\ncount\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n...\n5.690000e+02\n5.690000e+02\n569.000000\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n5.690000e+02\n\n\nmean\n-1.373633e-16\n6.868164e-17\n-1.248757e-16\n-2.185325e-16\n-8.366672e-16\n1.873136e-16\n4.995028e-17\n-4.995028e-17\n1.748260e-16\n4.745277e-16\n...\n1.248757e-17\n-3.746271e-16\n0.000000\n-2.372638e-16\n-3.371644e-16\n7.492542e-17\n2.247763e-16\n2.622390e-16\n-5.744282e-16\n-4.995028e-17\n\n\nstd\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n...\n1.000880e+00\n1.000880e+00\n1.000880\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n1.000880e+00\n\n\nmin\n-2.029648e+00\n-2.229249e+00\n-1.984504e+00\n-1.454443e+00\n-3.112085e+00\n-1.610136e+00\n-1.114873e+00\n-1.261820e+00\n-2.744117e+00\n-1.819865e+00\n...\n-2.223994e+00\n-1.693361e+00\n-1.222423\n-2.682695e+00\n-1.443878e+00\n-1.305831e+00\n-1.745063e+00\n-2.160960e+00\n-1.601839e+00\n-1.297676e+00\n\n\n25%\n-6.893853e-01\n-7.259631e-01\n-6.919555e-01\n-6.671955e-01\n-7.109628e-01\n-7.470860e-01\n-7.437479e-01\n-7.379438e-01\n-7.032397e-01\n-7.226392e-01\n...\n-7.486293e-01\n-6.895783e-01\n-0.642136\n-6.912304e-01\n-6.810833e-01\n-7.565142e-01\n-7.563999e-01\n-6.418637e-01\n-6.919118e-01\n-1.297676e+00\n\n\n50%\n-2.150816e-01\n-1.046362e-01\n-2.359800e-01\n-2.951869e-01\n-3.489108e-02\n-2.219405e-01\n-3.422399e-01\n-3.977212e-01\n-7.162650e-02\n-1.782793e-01\n...\n-4.351564e-02\n-2.859802e-01\n-0.341181\n-4.684277e-02\n-2.695009e-01\n-2.182321e-01\n-2.234689e-01\n-1.274095e-01\n-2.164441e-01\n7.706085e-01\n\n\n75%\n4.693926e-01\n5.841756e-01\n4.996769e-01\n3.635073e-01\n6.361990e-01\n4.938569e-01\n5.260619e-01\n6.469351e-01\n5.307792e-01\n4.709834e-01\n...\n6.583411e-01\n5.402790e-01\n0.357589\n5.975448e-01\n5.396688e-01\n5.311411e-01\n7.125100e-01\n4.501382e-01\n4.507624e-01\n7.706085e-01\n\n\nmax\n3.971288e+00\n4.651889e+00\n3.976130e+00\n5.250529e+00\n4.770911e+00\n4.568425e+00\n4.243589e+00\n3.927930e+00\n4.484751e+00\n4.910919e+00\n...\n3.885905e+00\n4.287337e+00\n5.930172\n3.955374e+00\n5.112877e+00\n4.700669e+00\n2.685877e+00\n6.046041e+00\n6.846856e+00\n7.706085e-01\n\n\n\n\n8 rows × 31 columns",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html",
+    "href": "03_logistic_regression_optimization.html",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "",
+    "text": "In this notebook, we demonstrate how to tune hyperparameters in a Logistic Regression model to improve performance.",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#step-1-load-breast-cancer-data",
+    "href": "03_logistic_regression_optimization.html#step-1-load-breast-cancer-data",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Step 1: Load Breast Cancer Data",
+    "text": "Step 1: Load Breast Cancer Data\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#step-2-define-a-function-to-train-and-evaluate",
+    "href": "03_logistic_regression_optimization.html#step-2-define-a-function-to-train-and-evaluate",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Step 2: Define a Function to Train and Evaluate",
+    "text": "Step 2: Define a Function to Train and Evaluate\nThis function will: - Train the model - Return training and test accuracy\n\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\ndef train_and_evaluate(max_iter=5000, C=1, penalty='l2', solver='liblinear'):\n    model = LogisticRegression(max_iter=max_iter, C=C, penalty=penalty, solver=solver)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    return train_acc, test_acc",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#regularization-in-logistic-regression",
+    "href": "03_logistic_regression_optimization.html#regularization-in-logistic-regression",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Regularization in Logistic Regression",
+    "text": "Regularization in Logistic Regression\nIn logistic regression, regularization is used to prevent overfitting by penalizing large coefficients.\n\n🔹 L2 Regularization (Ridge)\nMinimizes the following loss:\n\\[\n\\text{Loss} = \\text{Log Loss} + \\lambda \\cdot \\frac{1}{2} \\sum_{j=1}^{p} w_j^2\n\\]\n\n$ $ controls regularization strength (in scikit-learn: $ = $.\nShrinks coefficients smoothly towards zero, but rarely makes them exactly zero.\nGood for situations where all features may contribute a little.\n\n\n\n\n🔹 L1 Regularization (Lasso)\nMinimizes the following loss:\n\\[\n\\text{Loss} = \\text{Log Loss} + \\lambda \\cdot \\sum_{j=1}^{p} |w_j|\n\\]\n\nEncourages sparse solutions (some coefficients exactly zero).\nUseful for feature selection (automatic removal of irrelevant features).\nCan be harder to optimize due to the absolute value term.",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#step-3-explore-effect-of-c-inverse-of-regularization-strength",
+    "href": "03_logistic_regression_optimization.html#step-3-explore-effect-of-c-inverse-of-regularization-strength",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Step 3: Explore Effect of C (Inverse of Regularization Strength)",
+    "text": "Step 3: Explore Effect of C (Inverse of Regularization Strength)\nControls the amount of regularization. Effect:\nSmaller C → Stronger regularization → Prevents overfitting but may underfit.\nLarger C → Weaker regularization → Better fit but may overfit.\n\nimport matplotlib.pyplot as plt\n\nvalues = [ 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000 ]\ntrain_scores, test_scores = [], []\n\nfor v in values:\n    tr, te = train_and_evaluate(C=v)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nlabels = [str(s) for s in values]\n\nplt.plot(labels, train_scores, marker='o', label='Train Acc')\nplt.plot(labels, test_scores, marker='s', label='Test Acc')\nplt.xlabel('Values')\nplt.ylabel('Accuracy')\nplt.legend()\nplt.grid(True)\nplt.xticks(rotation=90, ha='right')\nplt.show()",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#step-4-explore-effect-of-penalty-l1-l2-regularization",
+    "href": "03_logistic_regression_optimization.html#step-4-explore-effect-of-penalty-l1-l2-regularization",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Step 4: Explore Effect of penalty (L1, L2 Regularization)",
+    "text": "Step 4: Explore Effect of penalty (L1, L2 Regularization)\n\n\n\n\n\n\n\n\nPenalty\nKey Effect\nWhen to Use\n\n\n\n\nL1\nSparsity, feature selection\nYou want simpler models or auto-feature selection\n\n\nL2\nShrinkage, no sparsity\nYou want to reduce overfitting without dropping features\n\n\n\n\nimport matplotlib.pyplot as plt\n\nvalues = [ 'l1', 'l2' ]\ntrain_scores, test_scores = [], []\n\nfor v in values:\n    tr, te = train_and_evaluate(penalty=v)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nlabels = [str(s) for s in values]\n\nplt.plot(labels, train_scores, marker='o', label='Train Acc')\nplt.plot(labels, test_scores, marker='s', label='Test Acc')\nplt.xlabel('Values')\nplt.ylabel('Accuracy')\nplt.legend()\nplt.grid(True)\nplt.xticks(rotation=90, ha='right')\nplt.show()",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#step-5-explore-effect-of-max_iter",
+    "href": "03_logistic_regression_optimization.html#step-5-explore-effect-of-max_iter",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Step 5: Explore Effect of max_iter",
+    "text": "Step 5: Explore Effect of max_iter\n\n\n\n\n\n\n\nScenario\nEffect\n\n\n\n\nToo low\nModel may not converge → You’ll see warnings like “STOP: TOTAL NO. OF F, G EVALUATIONS EXCEEDS LIMIT”. Model coefficients may be inaccurate or unstable.\n\n\nSufficient (or slightly high)\nModel converges properly. No warnings. Coefficients stabilize at optimal values.\n\n\nVery high (but converges early)\nNo harm—most solvers stop automatically once convergence is reached (before hitting max_iter). However, unnecessarily large values can increase training time for very large datasets.\n\n\n\n\nimport matplotlib.pyplot as plt\n\nvalues = [3, 4, 5, 6, 7, 10, 100 ]\ntrain_scores, test_scores = [], []\n\nfor v in values:\n    tr, te = train_and_evaluate(max_iter=v)\n    train_scores.append(tr)\n    test_scores.append(te)\n\nlabels = [str(s) for s in values]\n\nplt.plot(labels, train_scores, marker='o', label='Train Acc')\nplt.plot(labels, test_scores, marker='s', label='Test Acc')\nplt.xlabel('Values')\nplt.ylabel('Accuracy')\nplt.legend()\nplt.grid(True)\nplt.xticks(rotation=90, ha='right')\nplt.show()\n\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\svm\\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.\n  warnings.warn(\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\svm\\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.\n  warnings.warn(\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\svm\\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.\n  warnings.warn(\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\svm\\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.\n  warnings.warn(\nC:\\Users\\moji1\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\sklearn\\svm\\_base.py:1250: ConvergenceWarning: Liblinear failed to converge, increase the number of iterations.\n  warnings.warn(",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "03_logistic_regression_optimization.html#changing-the-classification-threshold",
+    "href": "03_logistic_regression_optimization.html#changing-the-classification-threshold",
+    "title": "Optimising a Logistic Regression Classifier",
+    "section": "Changing the Classification Threshold",
+    "text": "Changing the Classification Threshold\nMost classifiers output probabilities between 0 and 1. By default, the threshold for classification is 0.5. This means:\n\nIf predicted probability ≥ 0.5 → classify as positive\nElse → classify as negative\n\n\nChanging the Threshold:\n\nLower threshold → more positives predicted → higher recall, more false positives\nHigher threshold → fewer positives predicted → higher precision, more false negatives\n\nChoosing the right threshold depends on your application’s goals.\nWe’ll now visualize how the confusion matrix changes for two different thresholds.\n\nfrom sklearn.metrics import ConfusionMatrixDisplay\n\nthresholds = [0.3, 0.5, 0.7]         # List of three thresholds to compare\n\n# Retrain model\nmanual_model = LogisticRegression()\nmanual_model.fit(X_train, y_train)\n\n# Predict probabilities\ny_proba = manual_model.predict_proba(X_test)[:, 1]\n\n# Plot side-by-side confusion matrices\nfig, axs = plt.subplots(1, 3, figsize=(12, 5))\nfor i, thresh in enumerate(thresholds):\n    y_pred = (y_proba &gt;= thresh).astype(int)\n    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=axs[i])\n    axs[i].set_title(f\"Threshold = {thresh}\")\nplt.tight_layout()\nplt.show()",
+    "crumbs": [
+      "Logistic Regression Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html",
+    "href": "05_svm_optimization.html",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "",
+    "text": "In this notebook, we demonstrate how to tune hyperparameters in a Support Vector Machine (SVM) classifier to improve classification performance.\nWe will use the Breast Cancer Wisconsin dataset to: - Train an initial SVM model. - Explore the effects of the most important hyperparameters: - C — Regularization parameter controlling the trade-off between achieving low training error and low testing error. - gamma — Kernel coefficient controlling how much influence each data point has on the decision boundary. - kernel — Defines the type of decision boundary (linear or nonlinear), with options like 'linear', 'rbf', and 'poly'.\nSupport Vector Machines are powerful models for classification tasks and can handle both linear and non-linear relationships through the use of kernel functions. By tuning these hyperparameters, we can significantly improve model performance.",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html#step-1-load-breast-cancer-data",
+    "href": "05_svm_optimization.html#step-1-load-breast-cancer-data",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "Step 1: Load Breast Cancer Data",
+    "text": "Step 1: Load Breast Cancer Data\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html#exploring-the-effect-of-the-c-hyperparameter",
+    "href": "05_svm_optimization.html#exploring-the-effect-of-the-c-hyperparameter",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "Exploring the Effect of the C Hyperparameter",
+    "text": "Exploring the Effect of the C Hyperparameter\nThe C parameter in SVM controls the regularization strength: - Low C values → More regularization → Smoother decision boundary, possibly underfitting. - High C values → Less regularization → Fits the training data more closely, potentially overfitting.\nWe will train SVM models with different C values and observe how it affects accuracy.\n\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\nimport matplotlib.pyplot as plt\n\n# Test different values of C\nC_values = [0.01, 0.1, 1, 10, 100]\ntrain_scores = []\ntest_scores = []\n\nfor C in C_values:\n    model = SVC(C=C, kernel='rbf', gamma='scale')\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Plot the results\nplt.figure(figsize=(8, 6))\nplt.semilogx(C_values, train_scores, marker='o', label='Train Accuracy')\nplt.semilogx(C_values, test_scores, marker='s', label='Test Accuracy')\nplt.xlabel('C (log scale)')\nplt.ylabel('Accuracy')\nplt.title('Effect of Regularization Parameter C on SVM')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html#exploring-the-effect-of-the-gamma-hyperparameter",
+    "href": "05_svm_optimization.html#exploring-the-effect-of-the-gamma-hyperparameter",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "Exploring the Effect of the gamma Hyperparameter",
+    "text": "Exploring the Effect of the gamma Hyperparameter\nThe gamma parameter controls the influence of each individual training example: - Low gamma values → Far-reaching influence → Smoother decision boundary, possibly underfitting. - High gamma values → Very localized influence → Complex decision boundary, potentially overfitting.\nWe will now examine how varying gamma affects the model’s performance, while keeping C fixed.\n\n# Test different values of gamma\ngamma_values = [0.001, 0.01, 0.1, 1, 10]\ntrain_scores = []\ntest_scores = []\n\nfor gamma in gamma_values:\n    model = SVC(C=1, kernel='rbf', gamma=gamma)\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Plot the results\nplt.figure(figsize=(8, 6))\nplt.semilogx(gamma_values, train_scores, marker='o', label='Train Accuracy')\nplt.semilogx(gamma_values, test_scores, marker='s', label='Test Accuracy')\nplt.xlabel('gamma (log scale)')\nplt.ylabel('Accuracy')\nplt.title('Effect of gamma on SVM')\nplt.legend()\nplt.grid(True)\nplt.show()",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html#exploring-the-effect-of-the-kernel-hyperparameter",
+    "href": "05_svm_optimization.html#exploring-the-effect-of-the-kernel-hyperparameter",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "Exploring the Effect of the kernel Hyperparameter",
+    "text": "Exploring the Effect of the kernel Hyperparameter\nThe kernel parameter in SVM specifies the type of transformation applied to the input data: - 'linear' → No transformation; linear decision boundary. - 'rbf' (Radial Basis Function) → Maps data into higher dimensions for non-linear boundaries. - 'poly' → Polynomial transformations, allowing more flexible decision boundaries depending on degree.\nWe will now compare different kern\n\n# Test different kernel types\nkernel_types = ['linear', 'rbf', 'poly']\ntrain_scores = []\ntest_scores = []\n\nfor kernel in kernel_types:\n    model = SVC(C=1, kernel=kernel, gamma='scale')\n    model.fit(X_train, y_train)\n    train_acc = accuracy_score(y_train, model.predict(X_train))\n    test_acc = accuracy_score(y_test, model.predict(X_test))\n    train_scores.append(train_acc)\n    test_scores.append(test_acc)\n\n# Show numeric results\nfor k, tr, te in zip(kernel_types, train_scores, test_scores):\n    print(f\"Kernel: {k} → Train Accuracy: {tr:.3f}, Test Accuracy: {te:.3f}\")\n\n# Plot the results\nimport numpy as np\n\nx = np.arange(len(kernel_types))\nwidth = 0.35\n\nplt.figure(figsize=(8, 6))\nplt.bar(x - width/2, train_scores, width, label='Train Accuracy')\nplt.bar(x + width/2, test_scores, width, label='Test Accuracy')\nplt.xticks(x, kernel_types)\nplt.xlabel('Kernel Type')\nplt.ylabel('Accuracy')\nplt.title('Comparison of SVM Kernels')\nplt.legend()\nplt.grid(True, axis='y')\nplt.show()\n\nKernel: linear → Train Accuracy: 0.987, Test Accuracy: 0.988\nKernel: rbf → Train Accuracy: 0.985, Test Accuracy: 0.977\nKernel: poly → Train Accuracy: 0.910, Test Accuracy: 0.883",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "05_svm_optimization.html#changing-the-classification-threshold",
+    "href": "05_svm_optimization.html#changing-the-classification-threshold",
+    "title": "Optimising a Support Vector Machine (SVM) Classifier",
+    "section": "Changing the Classification Threshold",
+    "text": "Changing the Classification Threshold\nMost classifiers output probabilities between 0 and 1. By default, the threshold for classification is 0.5. This means:\n\nIf predicted probability ≥ 0.5 → classify as positive\nElse → classify as negative\n\n\nChanging the Threshold:\n\nLower threshold → more positives predicted → higher recall, more false positives\nHigher threshold → fewer positives predicted → higher precision, more false negatives\n\nChoosing the right threshold depends on your application’s goals.\nWe’ll now visualize how the confusion matrix changes for two different thresholds.\n\nfrom sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay\n\nthresholds = [0.3, 0.5, 0.7]         # List of two thresholds to compare\n\n\n# Train SVM with probability estimates enabled\nmodel = SVC(C=1, kernel='rbf', gamma='scale', probability=True)\nmodel.fit(X_train, y_train)\n\n# Predict probabilities\ny_proba = model.predict_proba(X_test)[:, 1]  # Probability of class 1\n\n\n# Plot side-by-side confusion matrices\nfig, axs = plt.subplots(1, 3, figsize=(12, 5))\nfor i, thresh in enumerate(thresholds):\n    y_pred = (y_proba &gt;= thresh).astype(int)\n    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=axs[i])\n    axs[i].set_title(f\"Threshold = {thresh}\")\nplt.tight_layout()\nplt.show()",
+    "crumbs": [
+      "SVM Optimisation"
+    ]
+  },
+  {
+    "objectID": "07_neural_networks.html",
+    "href": "07_neural_networks.html",
+    "title": "Neural Network (MLPClassifier) with Breast Cancer Dataset",
+    "section": "",
+    "text": "In this notebook, we will use a simple Multi-layer Perceptron (MLP) neural network to classify breast tumors.",
+    "crumbs": [
+      "Neural Networks"
+    ]
+  },
+  {
+    "objectID": "07_neural_networks.html#what-is-an-mlp",
+    "href": "07_neural_networks.html#what-is-an-mlp",
+    "title": "Neural Network (MLPClassifier) with Breast Cancer Dataset",
+    "section": "What is an MLP?",
+    "text": "What is an MLP?\nAn MLP is a type of feedforward neural network consisting of one or more hidden layers. Each neuron computes a weighted sum of its inputs and passes the result through a nonlinear activation function.\nMLPs are suitable for classification tasks and are trained using backpropagation to minimize loss.",
+    "crumbs": [
+      "Neural Networks"
+    ]
+  },
+  {
+    "objectID": "07_neural_networks.html#step-1-load-the-breast-cancer-dataset",
+    "href": "07_neural_networks.html#step-1-load-the-breast-cancer-dataset",
+    "title": "Neural Network (MLPClassifier) with Breast Cancer Dataset",
+    "section": "Step 1: Load the Breast Cancer Dataset",
+    "text": "Step 1: Load the Breast Cancer Dataset\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Neural Networks"
+    ]
+  },
+  {
+    "objectID": "07_neural_networks.html#step-3-train-an-mlpclassifier",
+    "href": "07_neural_networks.html#step-3-train-an-mlpclassifier",
+    "title": "Neural Network (MLPClassifier) with Breast Cancer Dataset",
+    "section": "Step 3: Train an MLPClassifier",
+    "text": "Step 3: Train an MLPClassifier\nWe use MLPClassifier from Scikit-Learn with one hidden layer.\n\nfrom sklearn.neural_network import MLPClassifier\n\nmodel = MLPClassifier(hidden_layer_sizes=(50,), max_iter=2000, random_state=42)\nmodel.fit(X_train, y_train)\n\nMLPClassifier(hidden_layer_sizes=(50,), max_iter=2000, random_state=42)In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.MLPClassifier?Documentation for MLPClassifieriFitted\n        \n            \n                Parameters\n                \n\n\n\n\nhidden_layer_sizes \n(50,)\n\n\n\nactivation \n'relu'\n\n\n\nsolver \n'adam'\n\n\n\nalpha \n0.0001\n\n\n\nbatch_size \n'auto'\n\n\n\nlearning_rate \n'constant'\n\n\n\nlearning_rate_init \n0.001\n\n\n\npower_t \n0.5\n\n\n\nmax_iter \n2000\n\n\n\nshuffle \nTrue\n\n\n\nrandom_state \n42\n\n\n\ntol \n0.0001\n\n\n\nverbose \nFalse\n\n\n\nwarm_start \nFalse\n\n\n\nmomentum \n0.9\n\n\n\nnesterovs_momentum \nTrue\n\n\n\nearly_stopping \nFalse\n\n\n\nvalidation_fraction \n0.1\n\n\n\nbeta_1 \n0.9\n\n\n\nbeta_2 \n0.999\n\n\n\nepsilon \n1e-08\n\n\n\nn_iter_no_change \n10\n\n\n\nmax_fun \n15000",
+    "crumbs": [
+      "Neural Networks"
+    ]
+  },
+  {
+    "objectID": "07_neural_networks.html#step-4-evaluate-the-model",
+    "href": "07_neural_networks.html#step-4-evaluate-the-model",
+    "title": "Neural Network (MLPClassifier) with Breast Cancer Dataset",
+    "section": "Step 4: Evaluate the Model",
+    "text": "Step 4: Evaluate the Model\n\nfrom sklearn.metrics import (\n    accuracy_score, precision_score, recall_score, f1_score,\n    ConfusionMatrixDisplay, classification_report, roc_curve, auc\n)\n\ny_pred = model.predict(X_test)\nprint(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Precision:\", precision_score(y_test, y_pred))\nprint(\"Recall:\", recall_score(y_test, y_pred))\nprint(\"F1 Score:\", f1_score(y_test, y_pred))\nprint(\"\\nClassification Report:\\n\", classification_report(y_test, y_pred))\n\nAccuracy: 0.9824561403508771\nPrecision: 0.9732142857142857\nRecall: 1.0\nF1 Score: 0.9864253393665159\n\nClassification Report:\n               precision    recall  f1-score   support\n\n           0       1.00      0.95      0.98        62\n           1       0.97      1.00      0.99       109\n\n    accuracy                           0.98       171\n   macro avg       0.99      0.98      0.98       171\nweighted avg       0.98      0.98      0.98       171\n\n\n\n\nWhat is a Confusion Matrix?\nA confusion matrix shows how well the model distinguishes between classes:\n\n\n\n\nPredicted Positive\nPredicted Negative\n\n\n\n\nActual Positive\nTrue Positive (TP)\nFalse Negative (FN)\n\n\nActual Negative\nFalse Positive (FP)\nTrue Negative (TN)\n\n\n\nThis matrix lets us compute metrics like accuracy, precision, recall, and F1 score.\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nConfusionMatrixDisplay.from_estimator(model, X_test, y_test)\nplt.title('Neural Network Confusion Matrix')\nplt.show()\n\n\n\n\n\n\n\n\n\n\nWhat is an ROC Curve?\nThe ROC Curve shows the trade-off between True Positive Rate and False Positive Rate. AUC quantifies this performance. Closer to 1.0 = better classifier.\n\ny_proba = model.predict_proba(X_test)[:, 1]\nfpr, tpr, _ = roc_curve(y_test, y_proba)\nroc_auc = auc(fpr, tpr)\n\nplt.plot(fpr, tpr, label='AUC = ' + str(round(roc_auc, 2)))\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel('False Positive Rate')\nplt.ylabel('True Positive Rate')\nplt.title('Neural Network ROC Curve')\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Neural Networks"
+    ]
+  },
+  {
+    "objectID": "09_random_forest.html",
+    "href": "09_random_forest.html",
+    "title": "Random Forest Classifier with Breast Cancer Dataset",
+    "section": "",
+    "text": "This notebook demonstrates the use of Random Forest Classifier for classifying tumors in the Breast Cancer dataset.",
+    "crumbs": [
+      "Random Forest"
+    ]
+  },
+  {
+    "objectID": "09_random_forest.html#what-is-a-random-forest",
+    "href": "09_random_forest.html#what-is-a-random-forest",
+    "title": "Random Forest Classifier with Breast Cancer Dataset",
+    "section": "What is a Random Forest?",
+    "text": "What is a Random Forest?\nRandom Forest is a powerful ensemble learning method for classification. It builds multiple decision trees and combines their predictions for improved accuracy and robustness.\nEach tree is trained on a random subset of the data and features, reducing overfitting and improving generalization.",
+    "crumbs": [
+      "Random Forest"
+    ]
+  },
+  {
+    "objectID": "09_random_forest.html#step-1-load-the-breast-cancer-dataset",
+    "href": "09_random_forest.html#step-1-load-the-breast-cancer-dataset",
+    "title": "Random Forest Classifier with Breast Cancer Dataset",
+    "section": "Step 1: Load the Breast Cancer Dataset",
+    "text": "Step 1: Load the Breast Cancer Dataset\n\nfrom sklearn.datasets import load_breast_cancer\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport pandas as pd\n\n# Load dataset\ndata = load_breast_cancer()\nX = data.data\ny = data.target\n\n# Split dataset\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.3, random_state=31\n)\n\n# Normalize (Standardize) features\nscaler = StandardScaler()\nX_train = scaler.fit_transform(X_train)\nX_test = scaler.transform(X_test)",
+    "crumbs": [
+      "Random Forest"
+    ]
+  },
+  {
+    "objectID": "09_random_forest.html#step-3-train-an-svm-model",
+    "href": "09_random_forest.html#step-3-train-an-svm-model",
+    "title": "Random Forest Classifier with Breast Cancer Dataset",
+    "section": "Step 3: Train an SVM Model",
+    "text": "Step 3: Train an SVM Model\nWe use the SVC class from sklearn.svm with default kernel (RBF).\n\nfrom sklearn.ensemble import RandomForestClassifier\n\nmodel = RandomForestClassifier(random_state=42)\nmodel.fit(X_train, y_train)\n\nRandomForestClassifier(random_state=42)In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.RandomForestClassifier?Documentation for RandomForestClassifieriFitted\n        \n            \n                Parameters\n                \n\n\n\n\nn_estimators \n100\n\n\n\ncriterion \n'gini'\n\n\n\nmax_depth \nNone\n\n\n\nmin_samples_split \n2\n\n\n\nmin_samples_leaf \n1\n\n\n\nmin_weight_fraction_leaf \n0.0\n\n\n\nmax_features \n'sqrt'\n\n\n\nmax_leaf_nodes \nNone\n\n\n\nmin_impurity_decrease \n0.0\n\n\n\nbootstrap \nTrue\n\n\n\noob_score \nFalse\n\n\n\nn_jobs \nNone\n\n\n\nrandom_state \n42\n\n\n\nverbose \n0\n\n\n\nwarm_start \nFalse\n\n\n\nclass_weight \nNone\n\n\n\nccp_alpha \n0.0\n\n\n\nmax_samples \nNone\n\n\n\nmonotonic_cst \nNone",
+    "crumbs": [
+      "Random Forest"
+    ]
+  },
+  {
+    "objectID": "09_random_forest.html#step-4-evaluate-the-model",
+    "href": "09_random_forest.html#step-4-evaluate-the-model",
+    "title": "Random Forest Classifier with Breast Cancer Dataset",
+    "section": "Step 4: Evaluate the Model",
+    "text": "Step 4: Evaluate the Model\n\nfrom sklearn.metrics import (\n    accuracy_score, precision_score, recall_score, f1_score,\n    ConfusionMatrixDisplay, classification_report, roc_curve, auc\n)\n\ny_pred = model.predict(X_test)\nprint(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Precision:\", precision_score(y_test, y_pred))\nprint(\"Recall:\", recall_score(y_test, y_pred))\nprint(\"F1 Score:\", f1_score(y_test, y_pred))\nprint(\"\\nClassification Report:\\n\", classification_report(y_test, y_pred))\n\nAccuracy: 0.9590643274853801\nPrecision: 0.9636363636363636\nRecall: 0.9724770642201835\nF1 Score: 0.9680365296803652\n\nClassification Report:\n               precision    recall  f1-score   support\n\n           0       0.95      0.94      0.94        62\n           1       0.96      0.97      0.97       109\n\n    accuracy                           0.96       171\n   macro avg       0.96      0.95      0.96       171\nweighted avg       0.96      0.96      0.96       171\n\n\n\n\nWhat is a Confusion Matrix?\nA confusion matrix is a summary of prediction results:\n\n\n\n\nPredicted Positive\nPredicted Negative\n\n\n\n\nActual Positive\nTrue Positive (TP)\nFalse Negative (FN)\n\n\nActual Negative\nFalse Positive (FP)\nTrue Negative (TN)\n\n\n\n\nAccuracy, Precision, Recall, F1 Score are all derived from this table.\n\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nConfusionMatrixDisplay.from_estimator(model, X_test, y_test)\nplt.title('SVM Confusion Matrix')\nplt.show()\n\n\n\n\n\n\n\n\n\n\nWhat is an ROC Curve?\nThe ROC Curve shows the trade-off between True Positive Rate (Recall) and False Positive Rate. The AUC (Area Under Curve) summarizes the performance into a single number.\n\ny_proba = model.predict_proba(X_test)[:, 1]\nfpr, tpr, _ = roc_curve(y_test, y_proba)\nroc_auc = auc(fpr, tpr)\n\nplt.plot(fpr, tpr, label='AUC = ' + str(round(roc_auc, 2)))\nplt.plot([0, 1], [0, 1], 'k--')\nplt.xlabel('False Positive Rate')\nplt.ylabel('True Positive Rate')\nplt.title('SVM ROC Curve')\nplt.legend()\nplt.show()",
+    "crumbs": [
+      "Random Forest"
+    ]
+  }
+]
