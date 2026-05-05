@@ -253,10 +253,9 @@ window.Quarto = {
    
   <ul>
   <li><a href="#what-is-logistic-regression" id="toc-what-is-logistic-regression" class="nav-link active" data-scroll-target="#what-is-logistic-regression">What is Logistic Regression?</a></li>
-  <li><a href="#step-1-load-and-explore-the-data" id="toc-step-1-load-and-explore-the-data" class="nav-link" data-scroll-target="#step-1-load-and-explore-the-data">Step 1: Load and Explore the Data</a></li>
-  <li><a href="#step-3-split-the-data-and-train-the-model" id="toc-step-3-split-the-data-and-train-the-model" class="nav-link" data-scroll-target="#step-3-split-the-data-and-train-the-model">Step 3: Split the Data and Train the Model</a></li>
-  <li><a href="#step-4-evaluate-the-model" id="toc-step-4-evaluate-the-model" class="nav-link" data-scroll-target="#step-4-evaluate-the-model">Step 4: Evaluate the Model</a></li>
-  <li><a href="#step-4-evaluate-the-model-1" id="toc-step-4-evaluate-the-model-1" class="nav-link" data-scroll-target="#step-4-evaluate-the-model-1">Step 4: Evaluate the Model</a>
+  <li><a href="#step-1-load-split-and-normalise-the-data" id="toc-step-1-load-split-and-normalise-the-data" class="nav-link" data-scroll-target="#step-1-load-split-and-normalise-the-data">Step 1: Load, Split and Normalise the Data</a></li>
+  <li><a href="#step-2-train-the-model" id="toc-step-2-train-the-model" class="nav-link" data-scroll-target="#step-2-train-the-model">Step 2: Train the Model</a></li>
+  <li><a href="#step-3-evaluate-and-visualize-the-model-performance" id="toc-step-3-evaluate-and-visualize-the-model-performance" class="nav-link" data-scroll-target="#step-3-evaluate-and-visualize-the-model-performance">Step 3: Evaluate and Visualize the Model Performance</a>
   <ul class="collapse">
   <li><a href="#what-is-a-confusion-matrix" id="toc-what-is-a-confusion-matrix" class="nav-link" data-scroll-target="#what-is-a-confusion-matrix">What is a Confusion Matrix?</a></li>
   <li><a href="#what-is-an-roc-curve" id="toc-what-is-an-roc-curve" class="nav-link" data-scroll-target="#what-is-an-roc-curve">What is an ROC Curve?</a></li>
@@ -296,8 +295,8 @@ P(y=1 | \mathbf{x}) = \frac{1}{1 + e^{- (\mathbf{w}^T \mathbf{x} + b)}}
 \]</span></p>
 <p>The output is a probability between 0 and 1. We classify an observation as class <code>1</code> if the predicted probability exceeds a threshold (typically 0.5).</p>
 </section>
-<section id="step-1-load-and-explore-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="step-1-load-and-explore-the-data">Step 1: Load and Explore the Data</h2>
+<section id="step-1-load-split-and-normalise-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-load-split-and-normalise-the-data">Step 1: Load, Split and Normalise the Data</h2>
 <p>We use the <code>load_breast_cancer()</code> dataset from Scikit-Learn. It includes 30 numeric features extracted from breast mass images.</p>
 <div id="2367cc4c" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
@@ -321,8 +320,8 @@ P(y=1 | \mathbf{x}) = \frac{1}{1 + e^{- (\mathbf{w}^T \mathbf{x} + b)}}
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> scaler.transform(X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="step-3-split-the-data-and-train-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-3-split-the-data-and-train-the-model">Step 3: Split the Data and Train the Model</h2>
+<section id="step-2-train-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-train-the-model">Step 2: Train the Model</h2>
 <p>We split the dataset into training and testing sets, and fit a logistic regression model.</p>
 <div id="bd4e95c6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -940,8 +939,8 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </div>
 </div>
 </section>
-<section id="step-4-evaluate-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-evaluate-the-model">Step 4: Evaluate the Model</h2>
+<section id="step-3-evaluate-and-visualize-the-model-performance" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-evaluate-and-visualize-the-model-performance">Step 3: Evaluate and Visualize the Model Performance</h2>
 <p>We will evaluate our model using the following metrics:</p>
 <ul>
 <li><strong>Accuracy</strong>: Proportion of correct predictions</li>
@@ -952,10 +951,6 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 <li><strong>ROC Curve</strong>: Tradeoff between true positive and false positive rates</li>
 <li><strong>AUC (Area Under Curve)</strong>: Summary of ROC curve performance</li>
 </ul>
-</section>
-<section id="step-4-evaluate-the-model-1" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-evaluate-the-model-1">Step 4: Evaluate the Model</h2>
-<p><strong>Metrics Used:</strong> - Accuracy - Precision - Recall - F1-score - Confusion Matrix - ROC Curve and AUC</p>
 <div id="df712d83" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    classification_report,</span>
@@ -1029,7 +1024,7 @@ weighted avg       0.98      0.98      0.98       171
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02_logistic_regression_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_logistic_regression_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1059,7 +1054,7 @@ weighted avg       0.98      0.98      0.98       171
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02_logistic_regression_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="02_logistic_regression_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
