@@ -225,8 +225,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#what-is-an-svm" id="toc-what-is-an-svm" class="nav-link active" data-scroll-target="#what-is-an-svm">What is an SVM?</a></li>
   <li><a href="#step-1-load-the-breast-cancer-dataset" id="toc-step-1-load-the-breast-cancer-dataset" class="nav-link" data-scroll-target="#step-1-load-the-breast-cancer-dataset">Step 1: Load the Breast Cancer Dataset</a></li>
-  <li><a href="#step-3-train-an-svm-model" id="toc-step-3-train-an-svm-model" class="nav-link" data-scroll-target="#step-3-train-an-svm-model">Step 3: Train an SVM Model</a></li>
-  <li><a href="#step-4-evaluate-the-model" id="toc-step-4-evaluate-the-model" class="nav-link" data-scroll-target="#step-4-evaluate-the-model">Step 4: Evaluate the Model</a>
+  <li><a href="#step-2-train-an-svm-model" id="toc-step-2-train-an-svm-model" class="nav-link" data-scroll-target="#step-2-train-an-svm-model">Step 2: Train an SVM Model</a></li>
+  <li><a href="#step-3-evaluate-the-model" id="toc-step-3-evaluate-the-model" class="nav-link" data-scroll-target="#step-3-evaluate-the-model">Step 3: Evaluate the Model</a>
   <ul class="collapse">
   <li><a href="#what-is-a-confusion-matrix" id="toc-what-is-a-confusion-matrix" class="nav-link" data-scroll-target="#what-is-a-confusion-matrix">What is a Confusion Matrix?</a></li>
   <li><a href="#what-is-an-roc-curve" id="toc-what-is-an-roc-curve" class="nav-link" data-scroll-target="#what-is-an-roc-curve">What is an ROC Curve?</a></li>
@@ -286,8 +286,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> scaler.transform(X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="step-3-train-an-svm-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-3-train-an-svm-model">Step 3: Train an SVM Model</h2>
+<section id="step-2-train-an-svm-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-train-an-svm-model">Step 2: Train an SVM Model</h2>
 <p>We use the <code>SVC</code> class from <code>sklearn.svm</code> with default kernel (RBF).</p>
 <div id="295a6587" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
@@ -905,8 +905,8 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </div>
 </div>
 </section>
-<section id="step-4-evaluate-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-evaluate-the-model">Step 4: Evaluate the Model</h2>
+<section id="step-3-evaluate-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-evaluate-the-model">Step 3: Evaluate the Model</h2>
 <div id="1278cda2" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    accuracy_score, precision_score, recall_score, f1_score,</span>
