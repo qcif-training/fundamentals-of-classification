@@ -229,6 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#step-3-evaluate-the-model" id="toc-step-3-evaluate-the-model" class="nav-link" data-scroll-target="#step-3-evaluate-the-model">Step 3: Evaluate the Model</a>
   <ul class="collapse">
   <li><a href="#what-is-a-confusion-matrix" id="toc-what-is-a-confusion-matrix" class="nav-link" data-scroll-target="#what-is-a-confusion-matrix">What is a Confusion Matrix?</a></li>
+  <li><a href="#what-is-a-confusion-matrix-1" id="toc-what-is-a-confusion-matrix-1" class="nav-link" data-scroll-target="#what-is-a-confusion-matrix-1">What is a Confusion Matrix?</a></li>
   <li><a href="#what-is-an-roc-curve" id="toc-what-is-an-roc-curve" class="nav-link" data-scroll-target="#what-is-an-roc-curve">What is an ROC Curve?</a></li>
   </ul></li>
   </ul>
@@ -944,20 +945,48 @@ weighted avg       0.98      0.98      0.98       171
 <thead>
 <tr class="header">
 <th></th>
-<th>Predicted Positive</th>
 <th>Predicted Negative</th>
+<th>Predicted Positive</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Actual Positive</td>
-<td>True Positive (TP)</td>
-<td>False Negative (FN)</td>
+<td>Actual Negative</td>
+<td>True Negative (TN)</td>
+<td>False Positive (FP)</td>
 </tr>
 <tr class="even">
+<td>Actual Positive</td>
+<td>False Negative (FN)</td>
+<td>True Positive (TP)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Accuracy, Precision, Recall, F1 Score are all derived from this table.</li>
+</ul>
+</section>
+<section id="what-is-a-confusion-matrix-1" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-a-confusion-matrix-1">What is a Confusion Matrix?</h3>
+<p>A <strong>confusion matrix</strong> is a summary of prediction results:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>Predicted Negative</th>
+<th>Predicted Positive</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
 <td>Actual Negative</td>
-<td>False Positive (FP)</td>
 <td>True Negative (TN)</td>
+<td>False Positive (FP)</td>
+</tr>
+<tr class="even">
+<td>Actual Positive</td>
+<td>False Negative (FN)</td>
+<td>True Positive (TP)</td>
 </tr>
 </tbody>
 </table>
