@@ -339,7 +339,7 @@ window.Quarto = {
 \text{Loss} = \text{Log Loss} + \lambda \cdot \frac{1}{2} \sum_{j=1}^{p} w_j^2
 \]</span></p>
 <ul>
-<li>$ $ controls regularization strength (in scikit-learn: $ = $.</li>
+<li><span class="math inline">\(\lambda\)</span> controls regularization strength (in scikit-learn: <span class="math inline">\(\lambda = \frac{1}{C}\)</span>).</li>
 <li>Shrinks coefficients smoothly towards zero, but rarely makes them exactly zero.</li>
 <li>Good for situations where all features may contribute a little.</li>
 </ul>
