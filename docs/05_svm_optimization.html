@@ -182,12 +182,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_model_evaluation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Model Evaluation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./07_neural_networks.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Neural Networks</span></a>
   </div>
@@ -208,6 +202,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./10_random_forest_optimization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Random Forest Optimisation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_model_evaluation_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">All Model Evaluation</span></a>
   </div>
 </li>
     </ul>
@@ -361,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="exploring-the-effect-of-the-kernel-hyperparameter" class="level2">
 <h2 class="anchored" data-anchor-id="exploring-the-effect-of-the-kernel-hyperparameter">Exploring the Effect of the <code>kernel</code> Hyperparameter</h2>
 <p>The <code>kernel</code> parameter in SVM specifies the <strong>type of transformation</strong> applied to the input data: - <code>'linear'</code> → No transformation; linear decision boundary. - <code>'rbf'</code> (Radial Basis Function) → Maps data into higher dimensions for non-linear boundaries. - <code>'poly'</code> → Polynomial transformations, allowing more flexible decision boundaries depending on degree.</p>
-<p>We will now compare different kern</p>
+<p>We will now compare different kernels:</p>
 <div id="c2e83a94" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test different kernel types</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>kernel_types <span class="op">=</span> [<span class="st">'linear'</span>, <span class="st">'rbf'</span>, <span class="st">'poly'</span>]</span>

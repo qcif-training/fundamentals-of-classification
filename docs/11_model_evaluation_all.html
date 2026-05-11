@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Random Forest Classifier with Breast Cancer Dataset – Fundamentals of Classification</title>
+<title>Model Evaluation: Comparing Logistic Regression, SVM, Neural Network, Random Forest – Fundamentals of Classification</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -109,6 +109,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -122,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09_random_forest.html">Random Forest</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11_model_evaluation_all.html">All Model Evaluation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -197,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09_random_forest.html" class="sidebar-item-text sidebar-link active">
+  <a href="./09_random_forest.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Random Forest</span></a>
   </div>
 </li>
@@ -209,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11_model_evaluation_all.html" class="sidebar-item-text sidebar-link">
+  <a href="./11_model_evaluation_all.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">All Model Evaluation</span></a>
   </div>
 </li>
@@ -223,23 +252,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-a-random-forest" id="toc-what-is-a-random-forest" class="nav-link active" data-scroll-target="#what-is-a-random-forest">What is a Random Forest?</a></li>
-  <li><a href="#step-1-load-the-breast-cancer-dataset" id="toc-step-1-load-the-breast-cancer-dataset" class="nav-link" data-scroll-target="#step-1-load-the-breast-cancer-dataset">Step 1: Load the Breast Cancer Dataset</a></li>
-  <li><a href="#step-3-train-an-svm-model" id="toc-step-3-train-an-svm-model" class="nav-link" data-scroll-target="#step-3-train-an-svm-model">Step 3: Train an SVM Model</a></li>
-  <li><a href="#step-4-evaluate-the-model" id="toc-step-4-evaluate-the-model" class="nav-link" data-scroll-target="#step-4-evaluate-the-model">Step 4: Evaluate the Model</a>
+  <li><a href="#step-1-load-the-data" id="toc-step-1-load-the-data" class="nav-link active" data-scroll-target="#step-1-load-the-data">Step 1: Load the Data</a></li>
+  <li><a href="#step-2-train-the-models" id="toc-step-2-train-the-models" class="nav-link" data-scroll-target="#step-2-train-the-models">Step 2: Train the Models</a></li>
+  <li><a href="#step-3-evaluation-metrics" id="toc-step-3-evaluation-metrics" class="nav-link" data-scroll-target="#step-3-evaluation-metrics">Step 3: Evaluation Metrics</a>
   <ul class="collapse">
+  <li><a href="#what-is-accuracy" id="toc-what-is-accuracy" class="nav-link" data-scroll-target="#what-is-accuracy">What is Accuracy?</a></li>
+  <li><a href="#what-are-precision-recall-and-f1-score" id="toc-what-are-precision-recall-and-f1-score" class="nav-link" data-scroll-target="#what-are-precision-recall-and-f1-score">What are Precision, Recall and F1 Score?</a></li>
   <li><a href="#what-is-a-confusion-matrix" id="toc-what-is-a-confusion-matrix" class="nav-link" data-scroll-target="#what-is-a-confusion-matrix">What is a Confusion Matrix?</a></li>
-  <li><a href="#what-is-an-roc-curve" id="toc-what-is-an-roc-curve" class="nav-link" data-scroll-target="#what-is-an-roc-curve">What is an ROC Curve?</a></li>
+  <li><a href="#what-is-the-roc-curve" id="toc-what-is-the-roc-curve" class="nav-link" data-scroll-target="#what-is-the-roc-curve">What is the ROC Curve?</a></li>
   </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/blob/main/09_random_forest.ipynb" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/blob/main/11_model_evaluation_all.ipynb" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Random Forest Classifier with Breast Cancer Dataset</h1>
+<h1 class="title">Model Evaluation: Comparing Logistic Regression, SVM, Neural Network, Random Forest</h1>
 </div>
 
 
@@ -256,15 +287,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This notebook demonstrates the use of <strong>Random Forest Classifier</strong> for classifying tumors in the Breast Cancer dataset.</p>
-<section id="what-is-a-random-forest" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-a-random-forest">What is a Random Forest?</h2>
-<p>Random Forest is a powerful ensemble learning method for classification. It builds multiple <strong>decision trees</strong> and combines their predictions for improved accuracy and robustness.</p>
-<p>Each tree is trained on a random subset of the data and features, reducing overfitting and improving generalization.</p>
-</section>
-<section id="step-1-load-the-breast-cancer-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="step-1-load-the-breast-cancer-dataset">Step 1: Load the Breast Cancer Dataset</h2>
-<div id="091d6b76" class="cell" data-execution_count="1">
+<p>We compare two classifiers: - <strong>Logistic Regression</strong> - <strong>SVM</strong> - <strong>MLP Classifier (Neural Network)</strong> - <strong>Random Forest</strong></p>
+<p>Using metrics: Accuracy, Precision, Recall, F1 Score, Confusion Matrix, and ROC-AUC.</p>
+<section id="step-1-load-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-load-the-data">Step 1: Load the Data</h2>
+<div id="7568cf26" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
@@ -286,14 +313,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> scaler.transform(X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="step-3-train-an-svm-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-3-train-an-svm-model">Step 3: Train an SVM Model</h2>
-<p>We use the <code>SVC</code> class from <code>sklearn.svm</code> with default kernel (RBF).</p>
-<div id="295a6587" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="step-2-train-the-models" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-train-the-models">Step 2: Train the Models</h2>
+<div id="b8b6dfdf" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPClassifier</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>lr_model <span class="op">=</span> LogisticRegression(max_iter<span class="op">=</span><span class="dv">5000</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>lr_model.fit(X_train, y_train)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>svm_model <span class="op">=</span> SVC(probability<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>svm_model.fit(X_train, y_train)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>nn_model <span class="op">=</span> MLPClassifier(hidden_layer_sizes<span class="op">=</span>(<span class="dv">50</span>,), max_iter<span class="op">=</span><span class="dv">2000</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>nn_model.fit(X_train, y_train)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>rf_model <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>rf_model.fit(X_train, y_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <style>#sk-container-id-1 {
   /* Definition of color scheme common for light and dark mode */
@@ -772,7 +810,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
     height: 14px;
     cursor: pointer;
 }
-</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>RandomForestClassifier(random_state=42)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked=""><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>RandomForestClassifier</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.7/modules/generated/sklearn.ensemble.RandomForestClassifier.html">?<span>Documentation for RandomForestClassifier</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted" data-param-prefix="">
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>SVC(probability=True)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked=""><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow"><div><div>SVC</div></div><div><a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.7/modules/generated/sklearn.svm.SVC.html">?<span>Documentation for SVC</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></div></label><div class="sk-toggleable__content fitted" data-param-prefix="">
         <div class="estimator-table">
             <details>
                 <summary>Parameters</summary>
@@ -781,78 +819,48 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <tbody>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">n_estimators&nbsp;</td>
-<td class="value">100</td>
+<td class="param">C&nbsp;</td>
+<td class="value">1.0</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
-<td class="param">criterion&nbsp;</td>
-<td class="value">'gini'</td>
+<td class="param">kernel&nbsp;</td>
+<td class="value">'rbf'</td>
 </tr>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">max_depth&nbsp;</td>
-<td class="value">None</td>
+<td class="param">degree&nbsp;</td>
+<td class="value">3</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
-<td class="param">min_samples_split&nbsp;</td>
-<td class="value">2</td>
+<td class="param">gamma&nbsp;</td>
+<td class="value">'scale'</td>
 </tr>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">min_samples_leaf&nbsp;</td>
-<td class="value">1</td>
-</tr>
-<tr class="default even">
-<td><em></em></td>
-<td class="param">min_weight_fraction_leaf&nbsp;</td>
-<td class="value">0.0</td>
-</tr>
-<tr class="default odd">
-<td><em></em></td>
-<td class="param">max_features&nbsp;</td>
-<td class="value">'sqrt'</td>
-</tr>
-<tr class="default even">
-<td><em></em></td>
-<td class="param">max_leaf_nodes&nbsp;</td>
-<td class="value">None</td>
-</tr>
-<tr class="default odd">
-<td><em></em></td>
-<td class="param">min_impurity_decrease&nbsp;</td>
+<td class="param">coef0&nbsp;</td>
 <td class="value">0.0</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
-<td class="param">bootstrap&nbsp;</td>
+<td class="param">shrinking&nbsp;</td>
 <td class="value">True</td>
-</tr>
-<tr class="default odd">
-<td><em></em></td>
-<td class="param">oob_score&nbsp;</td>
-<td class="value">False</td>
-</tr>
-<tr class="default even">
-<td><em></em></td>
-<td class="param">n_jobs&nbsp;</td>
-<td class="value">None</td>
 </tr>
 <tr class="user-set odd">
 <td><em></em></td>
-<td class="param">random_state&nbsp;</td>
-<td class="value">42</td>
+<td class="param">probability&nbsp;</td>
+<td class="value">True</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
-<td class="param">verbose&nbsp;</td>
-<td class="value">0</td>
+<td class="param">tol&nbsp;</td>
+<td class="value">0.001</td>
 </tr>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">warm_start&nbsp;</td>
-<td class="value">False</td>
+<td class="param">cache_size&nbsp;</td>
+<td class="value">200</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
@@ -861,17 +869,27 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </tr>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">ccp_alpha&nbsp;</td>
-<td class="value">0.0</td>
+<td class="param">verbose&nbsp;</td>
+<td class="value">False</td>
 </tr>
 <tr class="default even">
 <td><em></em></td>
-<td class="param">max_samples&nbsp;</td>
-<td class="value">None</td>
+<td class="param">max_iter&nbsp;</td>
+<td class="value">-1</td>
 </tr>
 <tr class="default odd">
 <td><em></em></td>
-<td class="param">monotonic_cst&nbsp;</td>
+<td class="param">decision_function_shape&nbsp;</td>
+<td class="value">'ovr'</td>
+</tr>
+<tr class="default even">
+<td><em></em></td>
+<td class="param">break_ties&nbsp;</td>
+<td class="value">False</td>
+</tr>
+<tr class="default odd">
+<td><em></em></td>
+<td class="param">random_state&nbsp;</td>
 <td class="value">None</td>
 </tr>
 </tbody>
@@ -925,41 +943,72 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </div>
 </div>
 </section>
-<section id="step-4-evaluate-the-model" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-evaluate-the-model">Step 4: Evaluate the Model</h2>
-<div id="1278cda2" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> (</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    accuracy_score, precision_score, recall_score, f1_score,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    ConfusionMatrixDisplay, classification_report, roc_curve, auc</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>, accuracy_score(y_test, y_pred))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision:"</span>, precision_score(y_test, y_pred))</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Recall:"</span>, recall_score(y_test, y_pred))</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score:"</span>, f1_score(y_test, y_pred))</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Classification Report:</span><span class="ch">\n</span><span class="st">"</span>, classification_report(y_test, y_pred))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="step-3-evaluation-metrics" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-evaluation-metrics">Step 3: Evaluation Metrics</h2>
+<section id="what-is-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-accuracy">What is Accuracy?</h3>
+<p><strong>Accuracy</strong> is the proportion of correct predictions:</p>
+<p><span class="math display">\[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\]</span></p>
+<p>Can be misleading if classes are imbalanced.</p>
+<div id="ca4d48ea" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>lr_acc <span class="op">=</span> accuracy_score(y_test, lr_model.predict(X_test))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>svm_acc <span class="op">=</span> accuracy_score(y_test, svm_model.predict(X_test))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>nn_acc <span class="op">=</span> accuracy_score(y_test, nn_model.predict(X_test))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>rf_acc <span class="op">=</span> accuracy_score(y_test, rf_model.predict(X_test))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Logistic egression Accuracy: </span><span class="sc">{</span>lr_acc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"SVM Accuracy: </span><span class="sc">{</span>svm_acc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Neural Network Accuracy: </span><span class="sc">{</span>nn_acc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Random Forest Accuracy: </span><span class="sc">{</span>rf_acc<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Accuracy: 0.9590643274853801
-Precision: 0.9636363636363636
-Recall: 0.9724770642201835
-F1 Score: 0.9680365296803652
-
-Classification Report:
-               precision    recall  f1-score   support
-
-           0       0.95      0.94      0.94        62
-           1       0.96      0.97      0.97       109
-
-    accuracy                           0.96       171
-   macro avg       0.96      0.95      0.96       171
-weighted avg       0.96      0.96      0.96       171
-</code></pre>
+<pre><code>Logistic egression Accuracy: 0.98
+SVM Accuracy: 0.98</code></pre>
 </div>
 </div>
+</section>
+<section id="what-are-precision-recall-and-f1-score" class="level3">
+<h3 class="anchored" data-anchor-id="what-are-precision-recall-and-f1-score">What are Precision, Recall and F1 Score?</h3>
+<ul>
+<li><strong>Precision</strong>: <span class="math inline">\(\frac{TP}{TP + FP}\)</span><br>
+</li>
+<li><strong>Recall</strong>: <span class="math inline">\(\frac{TP}{TP + FN}\)</span><br>
+</li>
+<li><strong>F1 Score</strong>: Harmonic mean of precision and recall</li>
+</ul>
+<p><span class="math display">\[
+F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\]</span></p>
+<div id="c866abba" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> precision_score, recall_score, f1_score</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, model <span class="kw">in</span> (<span class="st">"Logistic Regression"</span>, lr_model), (<span class="st">"SVM"</span>, svm_model),(<span class="st">"Neural Network"</span>, nn_model), (<span class="st">"Random Forest"</span>, rf_model)]:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> Metrics:"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Precision: </span><span class="sc">{</span>precision_score(y_test, y_pred)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Recall: </span><span class="sc">{</span>recall_score(y_test, y_pred)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"F1 Score: </span><span class="sc">{</span>f1_score(y_test, y_pred)<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+SVM Metrics:
+Precision: 0.97
+Recall: 0.99
+F1 Score: 0.98
+
+Neural Net Metrics:
+Precision: 0.98
+Recall: 0.98
+F1 Score: 0.98</code></pre>
+</div>
+</div>
+</section>
 <section id="what-is-a-confusion-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-a-confusion-matrix">What is a Confusion Matrix?</h3>
-<p>A <strong>confusion matrix</strong> is a summary of prediction results:</p>
+<p>A <strong>confusion matrix</strong> shows the breakdown of correct and incorrect classifications.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -981,51 +1030,87 @@ weighted avg       0.96      0.96      0.96       171
 </tr>
 </tbody>
 </table>
+<div id="33f9794f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> ConfusionMatrixDisplay</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_estimator(lr_model, X_test, y_test, ax<span class="op">=</span>axs[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">0</span>].set_title(<span class="st">"Logistic Regression Confusion Matrix"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_estimator(svm_model, X_test, y_test, ax<span class="op">=</span>axs[<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>, <span class="dv">1</span>].set_title(<span class="st">"SVM Confusion Matrix"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_estimator(nn_model, X_test, y_test, ax<span class="op">=</span>axs[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">0</span>].set_title(<span class="st">"Neural Network Confusion Matrix"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_estimator(rf_model, X_test, y_test, ax<span class="op">=</span>axs[<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>, <span class="dv">1</span>].set_title(<span class="st">"Random Forest Confusion Matrix"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="11_model_evaluation_all_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-is-the-roc-curve" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-roc-curve">What is the ROC Curve?</h3>
+<p>ROC = Receiver Operating Characteristic Curve</p>
 <ul>
-<li>Accuracy, Precision, Recall, F1 Score are all derived from this table.</li>
+<li>Plots TPR vs FPR</li>
+<li><strong>AUC</strong> = Area Under the ROC Curve Closer to 1 = better model.</li>
 </ul>
-<div id="0bdb1ecc" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ConfusionMatrixDisplay.from_estimator(model, X_test, y_test)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'SVM Confusion Matrix'</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8a2bc4ba" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve, auc</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>lr_probs <span class="op">=</span> lr_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>svm_probs <span class="op">=</span> svm_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>nn_probs <span class="op">=</span> nn_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>rf_probs <span class="op">=</span> rf_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>lr_fpr, lr_tpr, _ <span class="op">=</span> roc_curve(y_test, lr_probs)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>svm_fpr, svm_tpr, _ <span class="op">=</span> roc_curve(y_test, svm_probs)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>nn_fpr, nn_tpr, _ <span class="op">=</span> roc_curve(y_test, nn_probs)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>rf_fpr, rf_tpr, _ <span class="op">=</span> roc_curve(y_test, rf_probs)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>lr_auc <span class="op">=</span> auc(lr_fpr, lr_tpr)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>svm_auc <span class="op">=</span> auc(svm_fpr, svm_tpr)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>nn_auc <span class="op">=</span> auc(nn_fpr, nn_tpr)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>rf_auc <span class="op">=</span> auc(rf_fpr, rf_tpr)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>plt.plot(lr_fpr, lr_tpr, label<span class="op">=</span><span class="ss">f"Logistic Regression (AUC = </span><span class="sc">{</span>lr_auc<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>plt.plot(svm_fpr, svm_tpr, label<span class="op">=</span><span class="ss">f"SVM (AUC = </span><span class="sc">{</span>svm_auc<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>plt.plot(nn_fpr, nn_tpr, label<span class="op">=</span><span class="ss">f"Neural Network (AUC = </span><span class="sc">{</span>nn_auc<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.plot(rf_fpr, rf_tpr, label<span class="op">=</span><span class="ss">f"Random Forest (AUC = </span><span class="sc">{</span>rf_auc<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>], <span class="st">'k--'</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"False Positive Rate"</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"True Positive Rate"</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"ROC Curve"</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="09_random_forest_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="11_model_evaluation_all_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="what-is-an-roc-curve" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-an-roc-curve">What is an ROC Curve?</h3>
-<p>The <strong>ROC Curve</strong> shows the trade-off between True Positive Rate (Recall) and False Positive Rate. The <strong>AUC (Area Under Curve)</strong> summarizes the performance into a single number.</p>
-<div id="065ede5a" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>y_proba <span class="op">=</span> model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>fpr, tpr, _ <span class="op">=</span> roc_curve(y_test, y_proba)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="op">=</span> auc(fpr, tpr)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.plot(fpr, tpr, label<span class="op">=</span><span class="st">'AUC = '</span> <span class="op">+</span> <span class="bu">str</span>(<span class="bu">round</span>(roc_auc, <span class="dv">2</span>)))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">0</span>, <span class="dv">1</span>], <span class="st">'k--'</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'False Positive Rate'</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'True Positive Rate'</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'SVM ROC Curve'</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="09_random_forest_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-
-
 </section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Both models perform well, but:</p>
+<ul>
+<li><strong>Neural Net</strong> may achieve higher recall</li>
+<li><strong>SVM</strong> may offer higher precision</li>
+</ul>
+<p>Evaluation metrics guide us to choose the best model for our real-world use case.</p>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -1434,4 +1519,4 @@ weighted avg       0.96      0.96      0.96       171
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/blob/main/09_random_forest.ipynb" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/blob/main/11_model_evaluation_all.ipynb" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/Moji131/YOUR-NEW-REPO/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

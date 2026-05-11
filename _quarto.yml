@@ -20,8 +20,6 @@ website:
         href: 04_svm.ipynb
       - text: "SVM Optimisation"
         href: 05_svm_optimization.ipynb
-      - text: "Model Evaluation"
-        href: 06_model_evaluation.ipynb
       - text: "Neural Networks"
         href: 07_neural_networks.ipynb
       - text: "Neural Network Optimisation"
@@ -30,6 +28,8 @@ website:
         href: 09_random_forest.ipynb
       - text: "Random Forest Optimisation"
         href: 10_random_forest_optimization.ipynb
+      - text: "All Model Evaluation"
+        href: 11_model_evaluation_all.ipynb
 
   repo-url: "https://github.com/Moji131/YOUR-NEW-REPO"
   repo-actions: [source, issue]

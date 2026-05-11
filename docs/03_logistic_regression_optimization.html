@@ -211,12 +211,6 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06_model_evaluation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Model Evaluation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./07_neural_networks.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Neural Networks</span></a>
   </div>
@@ -237,6 +231,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./10_random_forest_optimization.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Random Forest Optimisation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_model_evaluation_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">All Model Evaluation</span></a>
   </div>
 </li>
     </ul>
@@ -354,7 +354,7 @@ window.Quarto = {
 <ul>
 <li>Encourages <strong>sparse solutions</strong> (some coefficients exactly zero).</li>
 <li>Useful for feature selection (automatic removal of irrelevant features).</li>
-<li>Can be harder to optimize due to the absolute value term.</li>
+<li>Can be harder to optimise due to the absolute value term.</li>
 </ul>
 </section>
 </section>
@@ -363,7 +363,7 @@ window.Quarto = {
 <p>Controls the amount of regularization. Effect:</p>
 <p>Smaller C → Stronger regularization → Prevents overfitting but may underfit.</p>
 <p>Larger C → Weaker regularization → Better fit but may overfit.</p>
-<div id="8b6a6c77" class="cell" data-execution_count="3">
+<div id="8b6a6c77" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [ <span class="fl">1e-3</span>, <span class="fl">1e-2</span>, <span class="fl">1e-1</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span> ]</span>
@@ -380,10 +380,11 @@ window.Quarto = {
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plt.plot(labels, test_scores, marker<span class="op">=</span><span class="st">'s'</span>, label<span class="op">=</span><span class="st">'Test Acc'</span>)</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Values'</span>)</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="fl">1.0</span>)   </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
