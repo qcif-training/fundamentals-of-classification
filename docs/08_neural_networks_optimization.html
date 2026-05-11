@@ -290,7 +290,7 @@ window.Quarto = {
 <section id="step-1-load-breast-cancer-data" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-load-breast-cancer-data">Step 1: Load Breast Cancer Data</h2>
 <p>Load with Normalisation</p>
-<div id="0a08f650" class="cell" data-execution_count="8">
+<div id="0a08f650" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778540923194,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:5,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># from sklearn.datasets import load_breast_cancer</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># from sklearn.model_selection import train_test_split</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># from sklearn.preprocessing import StandardScaler</span></span>
@@ -312,7 +312,7 @@ window.Quarto = {
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># X_test = scaler.transform(X_test)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Load without Normalisation To see the effects of different network sizes and other hyperparameters we use the non-normlaised dataset. For the easier task of calssifying using normalised data most values for hyperparameters result in a very good accuracy.</p>
-<div id="e7e12bfc" class="cell" data-execution_count="9">
+<div id="e7e12bfc" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541280142,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:2605,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
@@ -332,7 +332,7 @@ window.Quarto = {
 <section id="step-2-define-a-function-to-train-and-evaluate" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-define-a-function-to-train-and-evaluate">Step 2: Define a Function to Train and Evaluate</h2>
 <p>This function will: - Train the MLP model - Return training and test accuracy</p>
-<div id="ccb37443" class="cell" data-execution_count="10">
+<div id="ccb37443" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541280657,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:27,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPClassifier</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -356,7 +356,7 @@ window.Quarto = {
 <li>Too small: underfitting</li>
 <li>Too large: overfitting</li>
 </ul>
-<div id="e6fbb7d4" class="cell">
+<div id="e6fbb7d4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541372594,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:41,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">5</span>,),              <span class="co"># Very small network</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">10</span>,),             <span class="co"># Small network</span></span>
@@ -377,10 +377,10 @@ window.Quarto = {
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3 layers (100,50,20)"</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="8b6a6c77" class="cell">
+<div id="8b6a6c77" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541378394,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:3748,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-outputid="d0284015-d389-4c78-d4f3-65fca87821e4" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [ (<span class="dv">50</span>,<span class="dv">50</span>), (<span class="dv">50</span>, <span class="dv">50</span>, <span class="dv">50</span>), (<span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">400</span>, <span class="dv">200</span>), (<span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">400</span>, <span class="dv">400</span>, <span class="dv">400</span>, <span class="dv">200</span>), (<span class="dv">200</span>, <span class="dv">400</span>, <span class="dv">800</span>, <span class="dv">800</span>, <span class="dv">800</span>, <span class="dv">400</span>, <span class="dv">400</span>, <span class="dv">200</span>)]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="st">"2 layers"</span>, <span class="st">"3 layers"</span>, <span class="st">"4 layers"</span>, <span class="st">"6 layers"</span>, <span class="st">"8 layers"</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># values = [ (50,50), (50, 50, 50), (200, 400, 400, 200), (200, 400, 400, 400, 400, 200), (200, 400, 800, 800, 800, 400, 400, 200)]</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># labels = ["2 layers", "3 layers", "4 layers", "6 layers", "8 layers"]</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>train_scores, test_scores <span class="op">=</span> [], []</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -419,7 +419,7 @@ window.Quarto = {
 <p><span class="math display">\[
 \text{Loss} = \text{Original Loss} + \frac{\alpha}{2} \sum_{i} w_i^2
 \]</span></p>
-<div id="c2e83a94" class="cell" data-execution_count="12">
+<div id="c2e83a94" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541508143,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:99658,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-outputid="53eded43-ce40-4d44-c9b4-6c4951702757" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>alphas <span class="op">=</span>  [<span class="fl">1e-1</span>, <span class="fl">3e-1</span>, <span class="fl">5e-1</span>, <span class="fl">7e-1</span>, <span class="fl">1e1</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>train_scores, test_scores <span class="op">=</span> [], []</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -452,7 +452,7 @@ window.Quarto = {
 <li>Too small: slow convergence</li>
 <li>Too large: may never converge</li>
 </ul>
-<div id="ae03de3d" class="cell" data-execution_count="13">
+<div id="ae03de3d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541626347,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:72653,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-outputid="c7df4117-cb7f-472a-b1a1-bc77bfa2598f" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lrs <span class="op">=</span> [<span class="fl">1e-5</span>, <span class="fl">1e-4</span>, <span class="fl">1e-3</span>, <span class="fl">1e-2</span>, <span class="fl">1e-1</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>train_scores, test_scores <span class="op">=</span> [], []</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -504,7 +504,7 @@ window.Quarto = {
 </ul>
 <p>Choosing the right threshold depends on your application’s goals.</p>
 <p>We’ll now visualize how the confusion matrix changes for <strong>two different thresholds</strong>.</p>
-<div id="1cd0ed36" class="cell" data-execution_count="14">
+<div id="1cd0ed36" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1778541655362,&quot;user_tz&quot;:-600,&quot;elapsed&quot;:728,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fereshteh Nayyeri&quot;,&quot;userId&quot;:&quot;15635691588123993163&quot;}}}" data-outputid="26ff17ba-1295-416b-f063-1ad81d0fd4db" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> ConfusionMatrixDisplay</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>thresholds <span class="op">=</span> [<span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>]         <span class="co"># List of two thresholds to compare</span></span>
@@ -524,14 +524,10 @@ window.Quarto = {
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    axs[i].set_title(<span class="ss">f"Threshold = </span><span class="sc">{</span>thresh<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\moji1\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sklearn\neural_network\_multilayer_perceptron.py:780: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (200) reached and the optimization hasn't converged yet.
-  warnings.warn(</code></pre>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="08_neural_networks_optimization_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="08_neural_networks_optimization_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
